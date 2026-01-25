@@ -27,23 +27,27 @@ export default function ProjectsRail() {
             const windowWidth = window.innerWidth;
             const xMove = -(scrollWidth - windowWidth + 100); // 100px padding
 
-            gsap.fromTo(
-                section,
-                { x: 0 },
-                {
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: trigger,
+                    start: "top top",
+                    end: "+=3000", // Increased scroll distance slightly for smoother feel
+                    scrub: 1,
+                    pin: true,
+                    invalidateOnRefresh: true,
+                },
+            });
+
+            // Hold for a bit so the user can see the "Selected Work" header and first card properly
+            tl.to(section, {
+                x: 0,
+                duration: 1, // Represents "time" or scroll distance to hold
+            })
+                .to(section, {
                     x: xMove,
                     ease: "none",
-                    duration: 1,
-                    scrollTrigger: {
-                        trigger: trigger,
-                        start: "top top",
-                        end: "+=2000", // Scroll distance
-                        scrub: 0.5,
-                        pin: true,
-                        invalidateOnRefresh: true,
-                    },
-                }
-            );
+                    duration: 4, // 4x longer than the hold, meaningful scroll length
+                });
         });
 
         return () => {

@@ -28,7 +28,7 @@ export default function SkillsGalaxy() {
                 <p className="text-2xl md:text-5xl font-display font-medium">The Galaxy of Skills</p>
             </div>
 
-            <div className="relative w-full max-w-[800px] h-[400px] md:w-[1000px] md:h-[800px] flex items-center justify-center pointer-events-none md:pointer-events-auto">
+            <div className="relative w-full max-w-[800px] h-[600px] md:w-[1000px] md:h-[800px] flex items-center justify-center pointer-events-none md:pointer-events-auto">
                 <motion.div
                     style={{ rotate, scale }}
                     className="relative w-full h-full"
