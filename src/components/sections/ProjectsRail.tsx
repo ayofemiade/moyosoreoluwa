@@ -18,50 +18,53 @@ export default function ProjectsRail() {
 
         if (!section || !trigger) return;
 
-        // Calculate total width of all cards + gaps
-        // We are scrolling the 'section' horizontally
-        const scrollWidth = section.scrollWidth;
-        const windowWidth = window.innerWidth;
-        const xMove = -(scrollWidth - windowWidth + 100); // 100px padding
+        const mm = gsap.matchMedia();
 
-        const pin = gsap.fromTo(
-            section,
-            { x: 0 },
-            {
-                x: xMove,
-                ease: "none",
-                duration: 1,
-                scrollTrigger: {
-                    trigger: trigger,
-                    start: "top top",
-                    end: "+=2000", // Scroll distance
-                    scrub: 0.5,
-                    pin: true,
-                    // markers: true, // Debug
-                    invalidateOnRefresh: true, // Handle resize
-                },
-            }
-        );
+        mm.add("(min-width: 768px)", () => {
+            // Calculate total width of all cards + gaps
+            // We are scrolling the 'section' horizontally
+            const scrollWidth = section.scrollWidth;
+            const windowWidth = window.innerWidth;
+            const xMove = -(scrollWidth - windowWidth + 100); // 100px padding
+
+            gsap.fromTo(
+                section,
+                { x: 0 },
+                {
+                    x: xMove,
+                    ease: "none",
+                    duration: 1,
+                    scrollTrigger: {
+                        trigger: trigger,
+                        start: "top top",
+                        end: "+=2000", // Scroll distance
+                        scrub: 0.5,
+                        pin: true,
+                        invalidateOnRefresh: true,
+                    },
+                }
+            );
+        });
 
         return () => {
-            pin.kill();
+            mm.revert();
         };
     }, []);
 
     return (
-        <section id="projects" className="relative overflow-hidden bg-background">
+        <section id="projects" className="relative bg-background">
             <div ref={triggerRef}>
-                <div className="h-screen flex flex-col justify-center py-20">
+                <div className="min-h-screen flex flex-col justify-center py-20 w-full overflow-hidden">
                     <div className="container mx-auto px-6 mb-8">
                         <h2 className="text-sm font-mono uppercase tracking-widest text-muted-foreground mb-4">Selected Work</h2>
-                        <p className="text-3xl md:text-5xl font-display font-medium max-w-2xl">
+                        <p className="text-2xl md:text-5xl font-display font-medium max-w-full md:max-w-4xl break-words">
                             Engineering experiences that define brands.
                         </p>
                     </div>
 
                     <div
                         ref={sectionRef}
-                        className="flex gap-8 px-6 w-max"
+                        className="flex flex-col md:flex-row gap-8 px-6 w-full md:w-max"
                     >
                         {PROJECTS.map((project) => (
                             <ProjectCard key={project.slug} project={project} />
@@ -72,3 +75,4 @@ export default function ProjectsRail() {
         </section>
     );
 }
+

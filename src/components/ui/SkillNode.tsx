@@ -11,13 +11,13 @@ const categoryColors = {
     Tools: "bg-orange-500/10 text-orange-300 border-orange-500/20",
 };
 
-export default function SkillNode({ skill, index, total }: { skill: Skill; index: number; total: number }) {
+export default function SkillNode({ skill, index, total, isMobile }: { skill: Skill; index: number; total: number; isMobile: boolean }) {
     // Generate random positions for a galaxy feel (deterministic based on index for hydration stability ideally, but random for visual chaos here)
     // In a real galaxy, we'd use a physics simulation or pre-calculated positions.
     // For this demo, we'll use a spiral layout.
 
     const angle = (index / total) * Math.PI * 2 * 3; // 3 spirals
-    const radius = 100 + (index * 15); // Expand outwards
+    const radius = (100 + (index * 15)) * (isMobile ? 0.5 : 1); // Expand outwards, tighter on mobile
 
     const x = Math.cos(angle) * radius;
     const y = Math.sin(angle) * (radius * 0.6); // Flattened circle (galaxy shape)

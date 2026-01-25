@@ -8,7 +8,7 @@ import { useMobilePerformance } from "@/hooks/useMobilePerformance";
 
 export default function SkillsGalaxy() {
     const containerRef = useRef<HTMLDivElement>(null);
-    const { prefersReducedMotion } = useMobilePerformance();
+    const { isMobile, prefersReducedMotion } = useMobilePerformance();
 
     const { scrollYProgress } = useScroll({
         target: containerRef,
@@ -23,12 +23,12 @@ export default function SkillsGalaxy() {
         <section id="skills" ref={containerRef} className="min-h-screen flex flex-col items-center justify-center overflow-hidden py-32 relative">
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-accent/5 via-transparent to-transparent opacity-50" />
 
-            <div className="text-center z-10 mb-16">
-                <h2 className="text-sm font-mono uppercase tracking-widest text-muted-foreground mb-4">Tech Ecosystem</h2>
-                <p className="text-3xl md:text-5xl font-display font-medium">The Galaxy of Skills</p>
+            <div className="text-center z-10 mb-16 px-4">
+                <h2 className="text-base font-mono uppercase tracking-widest text-muted-foreground mb-4">Tech Ecosystem</h2>
+                <p className="text-2xl md:text-5xl font-display font-medium">The Galaxy of Skills</p>
             </div>
 
-            <div className="relative w-[800px] h-[600px] md:w-[1000px] md:h-[800px] flex items-center justify-center pointer-events-none md:pointer-events-auto">
+            <div className="relative w-full max-w-[800px] h-[400px] md:w-[1000px] md:h-[800px] flex items-center justify-center pointer-events-none md:pointer-events-auto">
                 <motion.div
                     style={{ rotate, scale }}
                     className="relative w-full h-full"
@@ -37,7 +37,7 @@ export default function SkillsGalaxy() {
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-accent/20 rounded-full blur-[60px]" />
 
                     {SKILLS.map((skill, index) => (
-                        <SkillNode key={skill.id} skill={skill} index={index} total={SKILLS.length} />
+                        <SkillNode key={skill.id} skill={skill} index={index} total={SKILLS.length} isMobile={isMobile} />
                     ))}
                 </motion.div>
             </div>

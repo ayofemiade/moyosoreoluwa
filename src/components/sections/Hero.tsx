@@ -28,14 +28,14 @@ export default function Hero() {
                 <div className="space-y-4">
                     <TextSplitReveal
                         text="I build web experiences that scale"
-                        className="text-4xl md:text-6xl lg:text-7xl font-display font-medium tracking-tight justify-center"
+                        className="text-3xl md:text-6xl lg:text-7xl font-display font-medium tracking-tight justify-center"
                         delay={0.2}
                     />
                     <motion.h1
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.8, duration: 0.8 }}
-                        className="text-4xl md:text-6xl lg:text-7xl font-display font-medium tracking-tight bg-gradient-to-br from-foreground to-foreground/50 bg-clip-text text-transparent"
+                        className="text-3xl md:text-6xl lg:text-7xl font-display font-medium tracking-tight bg-gradient-to-br from-foreground to-foreground/50 bg-clip-text text-transparent"
                     >
                         and perform
                     </motion.h1>
