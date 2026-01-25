@@ -30,8 +30,8 @@ export default function ProjectsRail() {
             const tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: trigger,
-                    start: "top top",
-                    end: "+=3000", // Increased scroll distance slightly for smoother feel
+                    start: "center center", // Center the section in the viewport before pinning
+                    end: "+=3000",
                     scrub: 1,
                     pin: true,
                     invalidateOnRefresh: true,

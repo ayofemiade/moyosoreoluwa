@@ -25,6 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="antialiased">
       <body
+        suppressHydrationWarning
         className={`${inter.variable} font-sans bg-background text-foreground overflow-x-hidden`}
       >
         <SmoothScrollProvider>

@@ -37,10 +37,10 @@ export default function SkillNode({ skill, index, total, isMobile }: { skill: Sk
                     rotate: [0, 5, -5, 0]
                 }}
                 transition={{
-                    duration: 4 + Math.random() * 2,
+                    duration: 4 + (index % 3), // Deterministic duration based on index
                     repeat: Infinity,
                     ease: "easeInOut",
-                    delay: Math.random() * 2
+                    delay: (index % 5) * 0.4 // Deterministic delay based on index
                 }}
                 whileHover={{ scale: 1.2, zIndex: 10 }}
                 className={cn(
