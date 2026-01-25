@@ -17,7 +17,7 @@ export default function SkillNode({ skill, index, total, isMobile }: { skill: Sk
     // For this demo, we'll use a spiral layout.
 
     const angle = (index / total) * Math.PI * 2 * 3; // 3 spirals
-    const radius = (100 + (index * 18)) * (isMobile ? 0.5 : 1); // Expand outwards, tighter on mobile
+    const radius = (100 + (index * 18)) * (isMobile ? 0.40 : 1); // Expand outwards, tighter on mobile
 
     const x = Math.cos(angle) * radius;
     const y = Math.sin(angle) * (radius * (isMobile ? 1.5 : 0.6)); // Flattened circle (galaxy shape) on desktop, taller on mobile

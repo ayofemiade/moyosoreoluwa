@@ -16,7 +16,7 @@ export default function SkillsGalaxy() {
     });
 
     // Disable rotation/scale if reduced motion
-    const rotate = useTransform(scrollYProgress, [0, 1], prefersReducedMotion ? [0, 0] : [0, 45]);
+    const rotate = useTransform(scrollYProgress, [0, 1], prefersReducedMotion ? [0, 0] : [0, 10]);
     const scale = useTransform(scrollYProgress, [0, 0.5, 1], prefersReducedMotion ? [1, 1, 1] : [0.8, 1, 0.8]);
 
     return (
