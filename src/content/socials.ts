@@ -1,25 +1,20 @@
-import { Github, Linkedin, Twitter, Mail } from "lucide-react";
+import { Github, Linkedin, Mail } from "lucide-react";
 
 export const SOCIALS = [
     {
         name: "GitHub",
-        href: "https://github.com/moyosoreoluwa", // Replace with actual
+        href: "https://github.com/ayofemiade",
         icon: Github,
     },
     {
         name: "LinkedIn",
-        href: "https://linkedin.com/in/moyosoreoluwa", // Replace with actual
+        href: "https://www.linkedin.com/in/moyosoreoluwa-ayofemi-adetoye-07850729a/",
         icon: Linkedin,
     },
     {
-        name: "Twitter",
-        href: "https://twitter.com/moyosoreoluwa", // Replace with actual
-        icon: Twitter,
-    },
-    {
         name: "Email",
-        href: "mailto:contact@moyosore.dev",
-        label: "contact@moyosore.dev",
+        href: "mailto:oreayofemi@gmail.com",
+        label: "oreayofemi@gmail.com",
         icon: Mail,
     },
 ];

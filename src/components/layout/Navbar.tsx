@@ -35,7 +35,7 @@ export default function Navbar() {
 
                     {/* Desktop Link */}
                     <Link
-                        href="mailto:contact@moyosore.dev"
+                        href="mailto:oreayofemi@gmail.com"
                         className="hidden md:block text-sm text-foreground/60 hover:text-foreground transition-colors"
                     >
                         Available for work

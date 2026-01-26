@@ -30,7 +30,7 @@ export default function StickyCTA() {
                     className="fixed bottom-6 right-6 z-40 hidden md:block"
                 >
                     <Link
-                        href="mailto:contact@moyosore.dev"
+                        href="mailto:oreayofemi@gmail.com"
                         className="flex items-center gap-2 px-6 py-3 rounded-full bg-foreground text-background font-medium shadow-2xl hover:scale-105 transition-transform"
                     >
                         <span>Hire Me</span>

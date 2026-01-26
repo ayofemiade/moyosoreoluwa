@@ -70,7 +70,7 @@ export default function Hero() {
                     </Link>
 
                     <Link
-                        href="/resume.pdf" // Placeholder
+                        href="/Resume 2026 (Master Resume).pdf"
                         target="_blank"
                         className="px-8 py-3 rounded-full border border-border hover:bg-white/5 transition-all text-foreground font-medium flex items-center gap-2 hover:scale-105 active:scale-95"
                     >

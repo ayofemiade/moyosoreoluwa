@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 
 export default function Contact() {
     const [copied, setCopied] = useState(false);
-    const email = "contact@moyosore.dev";
+    const email = "oreayofemi@gmail.com";
 
     const handleCopy = () => {
         navigator.clipboard.writeText(email);
