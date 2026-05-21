@@ -42,7 +42,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-background text-foreground selection:bg-accent selection:text-white">
-      <CinematicIntro onComplete={handleIntroComplete} />
+      <CinematicIntro onComplete={handleIntroComplete} onEnter={playAmbient} />
 
       {showContent && (
         <div className="animate-fade-in">
