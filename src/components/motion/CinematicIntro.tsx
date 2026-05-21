@@ -1,94 +1,99 @@
 "use client";
 
+import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
+import { useFramePreloader } from "@/components/hero/useFramePreloader";
+
+const INTRO_PLAYED_KEY = "intro_played";
 
 export default function CinematicIntro({ onComplete }: { onComplete: () => void }) {
-    const [isVisible, setIsVisible] = useState(true);
-    const [progress, setProgress] = useState(0);
+    const [isVisible, setIsVisible] = useState(false);
+    const [shouldShow, setShouldShow] = useState(false);
+    const hasCalledComplete = useRef(false);
 
+    const { isLoaded, progress } = useFramePreloader();
+
+    // Determine on mount (client-side only) whether to show the intro
     useEffect(() => {
-        // Check session storage to play only once per session
-        const hasPlayed = sessionStorage.getItem("intro_played");
-        if (hasPlayed) {
-            setIsVisible(false);
-            onComplete();
-            return;
+        const alreadyPlayed = sessionStorage.getItem(INTRO_PLAYED_KEY);
+        if (alreadyPlayed) {
+            // Skip intro — fire onComplete immediately
+            if (!hasCalledComplete.current) {
+                hasCalledComplete.current = true;
+                onComplete();
+            }
+        } else {
+            setShouldShow(true);
+            setIsVisible(true);
         }
+    }, [onComplete]);
 
-        // Progress simulation
-        const timer = setInterval(() => {
-            setProgress((prev) => {
-                if (prev >= 100) {
-                    clearInterval(timer);
-                    return 100;
-                }
-                return prev + 1;
-            });
-        }, 25);
+    // When loading finishes, begin exit
+    useEffect(() => {
+        if (!shouldShow) return;
+        if (isLoaded) {
+            const timer = setTimeout(() => {
+                sessionStorage.setItem(INTRO_PLAYED_KEY, "true");
+                setIsVisible(false);
+            }, 600);
+            return () => clearTimeout(timer);
+        }
+    }, [isLoaded, shouldShow]);
 
-        // End Intro
-        const timeout = setTimeout(() => {
-            finishIntro();
-        }, 3000);
-
-        return () => {
-            clearInterval(timer);
-            clearTimeout(timeout);
-        };
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-    const finishIntro = () => {
-        sessionStorage.setItem("intro_played", "true");
-        setIsVisible(false);
-        setTimeout(onComplete, 800); // Wait for exit animation
+    const handleExitComplete = () => {
+        if (!hasCalledComplete.current) {
+            hasCalledComplete.current = true;
+            onComplete();
+        }
     };
 
+    // If skipping, render nothing
+    if (!shouldShow) return null;
+
     return (
-        <AnimatePresence>
+        <AnimatePresence onExitComplete={handleExitComplete}>
             {isVisible && (
                 <motion.div
+                    key="cinematic-intro"
                     initial={{ opacity: 1 }}
-                    exit={{ opacity: 0, y: -20, filter: "blur(10px)" }}
-                    transition={{ duration: 0.8, ease: "easeInOut" }}
-                    className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background text-foreground"
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                    className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black"
                 >
-                    {/* Subtle Grid Background */}
-                    <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+                    {/* Subtle orbiting ring */}
+                    <motion.div
+                        className="absolute w-32 h-32 rounded-full border border-white/10"
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                    >
+                        <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-white/40" />
+                    </motion.div>
 
-                    <div className="relative z-10 flex flex-col items-center gap-6">
-                        <motion.div
-                            initial={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            transition={{ duration: 0.5 }}
-                            className="relative"
-                        >
-                            {/* Orbiting Ring */}
-                            <div className="w-16 h-16 rounded-full border-2 border-dashed border-accent/30 animate-[spin_3s_linear_infinite]" />
-                            <div className="absolute inset-0 flex items-center justify-center font-mono text-xs font-bold text-accent">
-                                {progress}%
-                            </div>
-                        </motion.div>
+                    {/* Progress counter */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.1 }}
+                        className="relative z-10 flex flex-col items-center gap-6"
+                    >
+                        <span className="text-6xl md:text-8xl font-display font-light tracking-tighter text-white tabular-nums">
+                            {progress}
+                            <span className="text-white/30 text-4xl md:text-5xl">%</span>
+                        </span>
 
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="font-mono text-sm tracking-widest text-muted-foreground uppercase"
-                        >
-                            Initializing System...
-                        </motion.div>
+                        {/* Progress bar */}
+                        <div className="w-48 h-[1px] bg-white/10 overflow-hidden rounded-full">
+                            <motion.div
+                                className="h-full bg-white/60"
+                                style={{ width: `${progress}%` }}
+                                transition={{ duration: 0.1 }}
+                            />
+                        </div>
 
-                        <motion.button
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 1 }}
-                            onClick={finishIntro}
-                            className="absolute top-full mt-12 text-xs text-muted-foreground/50 hover:text-foreground transition-colors uppercase tracking-widest"
-                        >
-                            Skip Intro
-                        </motion.button>
-                    </div>
+                        <span className="text-xs text-white/30 uppercase tracking-[0.3em] font-light">
+                            Loading experience
+                        </span>
+                    </motion.div>
                 </motion.div>
             )}
         </AnimatePresence>

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import Link from "next/link";
 import { useState } from "react";
 import { Menu } from "lucide-react";
@@ -8,6 +8,17 @@ import MobileMenu from "./MobileMenu";
 
 export default function Navbar() {
     const [isMobileOpen, setMobileOpen] = useState(false);
+    const { scrollY } = useScroll();
+    const [isScrolledPastHero, setIsScrolledPastHero] = useState(false);
+
+    useMotionValueEvent(scrollY, "change", (latest) => {
+        if (typeof window !== "undefined") {
+            setIsScrolledPastHero(latest > window.innerHeight * 2.8);
+        }
+    });
+
+    const textColorClass = isScrolledPastHero ? "text-foreground" : "text-white";
+    const mutedTextColorClass = isScrolledPastHero ? "text-foreground/60 hover:text-foreground" : "text-white/70 hover:text-white";
 
     return (
         <>
@@ -15,10 +26,12 @@ export default function Navbar() {
                 initial={{ y: -100, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 pointer-events-none backdrop-blur-md bg-background/50"
+                className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 pointer-events-none transition-colors duration-500 ${
+                    isScrolledPastHero ? "backdrop-blur-md bg-background/80 border-b border-border/50" : "bg-transparent"
+                }`}
             >
                 <div className="pointer-events-auto">
-                    <Link href="/" className="group relative flex items-center gap-2">
+                    <Link href="/" className={`group relative flex items-center gap-2 ${textColorClass} transition-colors duration-500`}>
                         <div className="h-2 w-2 rounded-full bg-accent animate-pulse" />
                         <span className="font-display font-medium text-lg tracking-tight">MOYOSORE</span>
                     </Link>
@@ -28,7 +41,7 @@ export default function Navbar() {
                     {/* Mobile Menu Trigger */}
                     <button
                         onClick={() => setMobileOpen(true)}
-                        className="md:hidden p-2 -mr-2 text-foreground/80 hover:text-foreground"
+                        className={`md:hidden p-2 -mr-2 transition-colors duration-500 ${mutedTextColorClass}`}
                     >
                         <Menu className="w-6 h-6" />
                     </button>
@@ -36,7 +49,7 @@ export default function Navbar() {
                     {/* Desktop Link */}
                     <Link
                         href="mailto:oreayofemi@gmail.com"
-                        className="hidden md:block text-sm text-foreground/60 hover:text-foreground transition-colors"
+                        className={`hidden md:block text-sm transition-colors duration-500 ${mutedTextColorClass}`}
                     >
                         Available for work
                     </Link>
