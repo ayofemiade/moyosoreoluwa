@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import CinematicIntro from "@/components/motion/CinematicIntro";
 import Hero from "@/components/sections/Hero";
 import About from "@/components/sections/About";
@@ -32,13 +32,6 @@ export default function Home() {
   const handleEnter = useCallback(() => {
     playAmbient();
   }, [playAmbient]);
-
-  // Fallback trigger for skipped intros (subsequent visits)
-  useEffect(() => {
-    if (showContent) {
-      playAmbient();
-    }
-  }, [showContent, playAmbient]);
 
   return (
     <main className="min-h-screen bg-background text-foreground selection:bg-accent selection:text-white">

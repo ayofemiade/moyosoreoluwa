@@ -4,8 +4,6 @@ import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useFramePreloader } from "@/components/hero/useFramePreloader";
 
-const INTRO_PLAYED_KEY = "intro_played";
-
 interface CinematicIntroProps {
     onComplete: () => void;
     onEnter: () => void;
@@ -21,18 +19,9 @@ export default function CinematicIntro({ onComplete, onEnter }: CinematicIntroPr
 
     // Determine on mount (client-side only) whether to show the intro
     useEffect(() => {
-        const alreadyPlayed = sessionStorage.getItem(INTRO_PLAYED_KEY);
-        if (alreadyPlayed) {
-            // Skip intro — fire onComplete immediately
-            if (!hasCalledComplete.current) {
-                hasCalledComplete.current = true;
-                onComplete();
-            }
-        } else {
-            setShouldShow(true);
-            setIsVisible(true);
-        }
-    }, [onComplete]);
+        setShouldShow(true);
+        setIsVisible(true);
+    }, []);
 
     // When loading finishes, show the Enter button instead of auto-exiting
     useEffect(() => {
@@ -45,8 +34,6 @@ export default function CinematicIntro({ onComplete, onEnter }: CinematicIntroPr
     const handleEnterClick = () => {
         // Play the sound synchronously in the call stack of the click event
         onEnter();
-        
-        sessionStorage.setItem(INTRO_PLAYED_KEY, "true");
         setIsVisible(false);
     };
 
