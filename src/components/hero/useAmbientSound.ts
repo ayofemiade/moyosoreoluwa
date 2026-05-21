@@ -82,6 +82,11 @@ export function useAmbientSound(options: AmbientSoundOptions = {}) {
         return oscillators;
     }, []);
 
+    // Sync isPlaying React state to actual AudioContext state
+    const syncPlayingState = useCallback((ctx: AudioContext) => {
+        setIsPlaying(ctx.state === "running" && !isMuted);
+    }, [isMuted]);
+
     const initAndPlay = useCallback(() => {
         if (isInitialized.current) {
             // Already initialized — just handle resume if needed
@@ -89,11 +94,13 @@ export function useAmbientSound(options: AmbientSoundOptions = {}) {
             const gain = masterGainRef.current;
             if (ctx && gain && ctx.state === "suspended") {
                 ctx.resume().then(() => {
+                    if (audioElementRef.current && audioElementRef.current.paused) {
+                        audioElementRef.current.play().catch(console.warn);
+                    }
                     gain.gain.cancelScheduledValues(ctx.currentTime);
                     gain.gain.setValueAtTime(gain.gain.value, ctx.currentTime);
                     gain.gain.linearRampToValueAtTime(volume, ctx.currentTime + 0.5);
-                    setIsPlaying(true);
-                    setIsMuted(false);
+                    syncPlayingState(ctx);
                 });
             }
             return;
@@ -105,6 +112,11 @@ export function useAmbientSound(options: AmbientSoundOptions = {}) {
 
             const ctx = new AudioCtx();
             audioContextRef.current = ctx;
+
+            // Handle browser state changes
+            ctx.onstatechange = () => {
+                syncPlayingState(ctx);
+            };
 
             const masterGain = ctx.createGain();
             masterGain.gain.setValueAtTime(0, ctx.currentTime);
@@ -127,17 +139,15 @@ export function useAmbientSound(options: AmbientSoundOptions = {}) {
             }
 
             isInitialized.current = true;
-            setIsPlaying(true);
-            setIsMuted(false);
+            syncPlayingState(ctx);
         } catch (e) {
             console.warn("Ambient sound failed to initialize:", e);
         }
-    }, [audioSrc, volume, fadeInDuration, createSynthesizedAmbient]);
+    }, [audioSrc, volume, fadeInDuration, createSynthesizedAmbient, syncPlayingState]);
 
     // Request play — called automatically by the page, but deferred until user gesture if blocked
     const play = useCallback(() => {
         shouldPlayRef.current = true;
-        // Try playing immediately (works on localhost or if user clicked already)
         initAndPlay();
     }, [initAndPlay]);
 
@@ -147,26 +157,32 @@ export function useAmbientSound(options: AmbientSoundOptions = {}) {
             if (shouldPlayRef.current && !isInitialized.current) {
                 initAndPlay();
             } else if (isInitialized.current && audioContextRef.current?.state === "suspended") {
-                // Resume on user interaction if suspended
-                audioContextRef.current.resume().then(() => {
-                    if (masterGainRef.current && audioContextRef.current) {
-                        masterGainRef.current.gain.cancelScheduledValues(audioContextRef.current.currentTime);
-                        masterGainRef.current.gain.linearRampToValueAtTime(
+                const ctx = audioContextRef.current;
+                const gain = masterGainRef.current;
+                
+                ctx.resume().then(() => {
+                    if (audioElementRef.current && audioElementRef.current.paused) {
+                        audioElementRef.current.play().catch(console.warn);
+                    }
+                    if (gain) {
+                        gain.gain.cancelScheduledValues(ctx.currentTime);
+                        gain.gain.linearRampToValueAtTime(
                             isMuted ? 0 : volume,
-                            audioContextRef.current.currentTime + 0.5
+                            ctx.currentTime + 0.5
                         );
                     }
+                    syncPlayingState(ctx);
                 });
             }
         };
 
-        const events = ["click", "touchstart", "keydown", "mousedown"];
+        const events = ["click", "touchstart", "keydown", "mousedown", "pointerdown", "wheel"];
         events.forEach(event => document.addEventListener(event, handleUserGesture, { passive: true }));
 
         return () => {
             events.forEach(event => document.removeEventListener(event, handleUserGesture));
         };
-    }, [initAndPlay, volume, isMuted]);
+    }, [initAndPlay, volume, isMuted, syncPlayingState]);
 
     const toggleMute = useCallback(() => {
         // If not initialized, initialize it right now since we are in a click event
@@ -180,20 +196,25 @@ export function useAmbientSound(options: AmbientSoundOptions = {}) {
         const gain = masterGainRef.current;
         if (!ctx || !gain) return;
 
-        if (ctx.state === "suspended") {
-            ctx.resume();
-        }
+        const newMuteState = !isMuted;
+        setIsMuted(newMuteState);
 
-        if (isMuted) {
-            gain.gain.cancelScheduledValues(ctx.currentTime);
-            gain.gain.setValueAtTime(gain.gain.value, ctx.currentTime);
-            gain.gain.linearRampToValueAtTime(volume, ctx.currentTime + 0.5);
-            setIsMuted(false);
+        if (ctx.state === "suspended") {
+            ctx.resume().then(() => {
+                if (audioElementRef.current && audioElementRef.current.paused) {
+                    audioElementRef.current.play().catch(console.warn);
+                }
+                gain.gain.cancelScheduledValues(ctx.currentTime);
+                gain.gain.setValueAtTime(gain.gain.value, ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(newMuteState ? 0 : volume, ctx.currentTime + 0.5);
+            });
         } else {
+            if (audioElementRef.current && audioElementRef.current.paused && !newMuteState) {
+                audioElementRef.current.play().catch(console.warn);
+            }
             gain.gain.cancelScheduledValues(ctx.currentTime);
             gain.gain.setValueAtTime(gain.gain.value, ctx.currentTime);
-            gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.3);
-            setIsMuted(true);
+            gain.gain.linearRampToValueAtTime(newMuteState ? 0 : volume, ctx.currentTime + 0.5);
         }
     }, [isMuted, volume, initAndPlay]);
 
@@ -210,11 +231,12 @@ export function useAmbientSound(options: AmbientSoundOptions = {}) {
 
         setTimeout(() => {
             if (ctx.state === "running") {
-                ctx.suspend();
+                ctx.suspend().then(() => {
+                    syncPlayingState(ctx);
+                });
             }
-            setIsPlaying(false);
         }, fadeOutDuration * 1000);
-    }, [fadeOutDuration]);
+    }, [fadeOutDuration, syncPlayingState]);
 
     // Cleanup on unmount
     useEffect(() => {
