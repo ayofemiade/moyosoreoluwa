@@ -112,9 +112,6 @@ export default function CinematicIntro({ onComplete, onEnter }: CinematicIntroPr
                                         <span className="absolute inset-0 bg-white opacity-0 group-hover:opacity-5 transition-opacity duration-500" />
                                         Enter Experience
                                     </motion.button>
-                                    <span className="text-[10px] text-white/40 uppercase tracking-[0.15em]">
-                                        Sound Recommended
-                                    </span>
                                 </motion.div>
                             )}
                         </AnimatePresence>
