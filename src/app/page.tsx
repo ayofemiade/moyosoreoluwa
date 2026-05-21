@@ -29,20 +29,20 @@ export default function Home() {
     setShowContent(true);
   }, []);
 
-  // Trigger ambient sound when hero content becomes visible
+  const handleEnter = useCallback(() => {
+    playAmbient();
+  }, [playAmbient]);
+
+  // Fallback trigger for skipped intros (subsequent visits)
   useEffect(() => {
     if (showContent) {
-      // Small delay to let the hero fade in before sound starts
-      const timer = setTimeout(() => {
-        playAmbient();
-      }, 500);
-      return () => clearTimeout(timer);
+      playAmbient();
     }
   }, [showContent, playAmbient]);
 
   return (
     <main className="min-h-screen bg-background text-foreground selection:bg-accent selection:text-white">
-      <CinematicIntro onComplete={handleIntroComplete} />
+      <CinematicIntro onComplete={handleIntroComplete} onEnter={handleEnter} />
 
       {showContent && (
         <div className="animate-fade-in">
