@@ -41,6 +41,18 @@ export default function ScrollyCanvas({ scrollYProgress, images }: ScrollyCanvas
         const ctx = renderContextRef.current;
         const img = images[index];
 
+        // If the image is not yet loaded, wait for it to load and render again
+        if (!img.complete) {
+            const handleLoad = () => {
+                const currentIndex = Math.round(scrollYProgress.get() * (images.length - 1));
+                if (currentIndex === index) {
+                    renderFrame(index);
+                }
+            };
+            img.addEventListener("load", handleLoad, { once: true });
+            return;
+        }
+
         // Object-fit: cover logic
         const canvasRatio = canvas.width / canvas.height;
         const imgRatio = img.width / img.height;
