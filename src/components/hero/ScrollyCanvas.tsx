@@ -19,31 +19,12 @@ export default function ScrollyCanvas({ scrollYProgress, images }: ScrollyCanvas
         const canvas = canvasRef.current;
         renderContextRef.current = canvas.getContext("2d", { alpha: false }); // Optimize for no transparency
 
-        let lastWidth = window.innerWidth;
-        let lastHeight = window.innerHeight;
-
         const resizeCanvas = () => {
-            const width = window.innerWidth;
-            const height = window.innerHeight;
-
-            // Only trigger full canvas redraw if width changed or height changed significantly (ignores mobile address bar hiding/showing)
-            const widthChanged = width !== lastWidth;
-            const heightChanged = Math.abs(height - lastHeight) > 120;
-            const isUninitialized = !canvas.width;
-
-            if (widthChanged || heightChanged || isUninitialized) {
-                const dpr = window.devicePixelRatio || 1;
-                canvas.width = width * dpr;
-                canvas.height = height * dpr;
-                canvas.style.width = `${width}px`;
-                canvas.style.height = `${height}px`;
-
-                lastWidth = width;
-                lastHeight = height;
-
-                if (images.length > 0) {
-                    renderFrame(Math.round(scrollYProgress.get() * (images.length - 1)));
-                }
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            // Re-render the current frame on resize
+            if (images.length > 0) {
+                renderFrame(Math.round(scrollYProgress.get() * (images.length - 1)));
             }
         };
 

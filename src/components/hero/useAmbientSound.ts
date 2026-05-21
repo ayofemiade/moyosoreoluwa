@@ -4,22 +4,13 @@ import { useRef, useState, useCallback, useEffect } from "react";
 
 /**
  * Ambient Sound System using Web Audio API
- *
- * Creates a subtle, warm ambient pad using layered detuned oscillators.
- * Designed to be audible on laptop speakers.
- *
- * To use a real audio file instead:
- *   useAmbientSound({ audioSrc: "/sounds/ambient.mp3" })
+ * Defer initialization strictly to user interactions to bypass autoplay policy.
  */
 
 interface AmbientSoundOptions {
-    /** Path to an audio file. If provided, uses the file instead of synthesis. */
     audioSrc?: string;
-    /** Master volume (0-1). Default: 0.12 */
     volume?: number;
-    /** Fade-in duration in seconds. Default: 3 */
     fadeInDuration?: number;
-    /** Fade-out duration in seconds. Default: 1.5 */
     fadeOutDuration?: number;
 }
 
@@ -35,14 +26,14 @@ export function useAmbientSound(options: AmbientSoundOptions = {}) {
     const masterGainRef = useRef<GainNode | null>(null);
     const sourceNodesRef = useRef<OscillatorNode[]>([]);
     const audioElementRef = useRef<HTMLAudioElement | null>(null);
+    
     const [isPlaying, setIsPlaying] = useState(false);
     const [isMuted, setIsMuted] = useState(false);
+    
     const isInitialized = useRef(false);
-    const pendingPlay = useRef(false);
+    const shouldPlayRef = useRef(false);
 
     const createSynthesizedAmbient = useCallback((ctx: AudioContext, masterGain: GainNode) => {
-        // Frequencies audible on laptop speakers (higher range)
-        // Creates a warm ambient chord: C4 + E4 + G4 + C5 with detuning for shimmer
         const layers = [
             { freq: 261.63, detune: -4, type: "sine" as OscillatorType, gain: 0.3 },     // C4
             { freq: 261.63, detune: 6, type: "sine" as OscillatorType, gain: 0.15 },      // C4 detuned (chorus)
@@ -51,14 +42,12 @@ export function useAmbientSound(options: AmbientSoundOptions = {}) {
             { freq: 523.25, detune: -2, type: "triangle" as OscillatorType, gain: 0.08 }, // C5 (soft shimmer)
         ];
 
-        // Lowpass filter — warm but audible
         const filter = ctx.createBiquadFilter();
         filter.type = "lowpass";
         filter.frequency.value = 800;
         filter.Q.value = 0.5;
         filter.connect(masterGain);
 
-        // Subtle reverb-like effect using delay
         const delay = ctx.createDelay();
         delay.delayTime.value = 0.3;
         const delayGain = ctx.createGain();
@@ -95,17 +84,14 @@ export function useAmbientSound(options: AmbientSoundOptions = {}) {
 
     const initAndPlay = useCallback(() => {
         if (isInitialized.current) {
-            // Already initialized — just resume if suspended
-            if (audioContextRef.current?.state === "suspended") {
-                audioContextRef.current.resume().then(() => {
-                    if (masterGainRef.current && audioContextRef.current) {
-                        masterGainRef.current.gain.cancelScheduledValues(audioContextRef.current.currentTime);
-                        masterGainRef.current.gain.setValueAtTime(0, audioContextRef.current.currentTime);
-                        masterGainRef.current.gain.linearRampToValueAtTime(
-                            volume,
-                            audioContextRef.current.currentTime + fadeInDuration
-                        );
-                    }
+            // Already initialized — just handle resume if needed
+            const ctx = audioContextRef.current;
+            const gain = masterGainRef.current;
+            if (ctx && gain && ctx.state === "suspended") {
+                ctx.resume().then(() => {
+                    gain.gain.cancelScheduledValues(ctx.currentTime);
+                    gain.gain.setValueAtTime(gain.gain.value, ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(volume, ctx.currentTime + 0.5);
                     setIsPlaying(true);
                     setIsMuted(false);
                 });
@@ -114,12 +100,15 @@ export function useAmbientSound(options: AmbientSoundOptions = {}) {
         }
 
         try {
-            const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+            const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+            if (!AudioCtx) return;
+
             const ctx = new AudioCtx();
             audioContextRef.current = ctx;
 
             const masterGain = ctx.createGain();
             masterGain.gain.setValueAtTime(0, ctx.currentTime);
+            // Schedule the fade-in
             masterGain.gain.linearRampToValueAtTime(volume, ctx.currentTime + fadeInDuration);
             masterGain.connect(ctx.destination);
             masterGainRef.current = masterGain;
@@ -138,7 +127,6 @@ export function useAmbientSound(options: AmbientSoundOptions = {}) {
             }
 
             isInitialized.current = true;
-            pendingPlay.current = false;
             setIsPlaying(true);
             setIsMuted(false);
         } catch (e) {
@@ -146,54 +134,51 @@ export function useAmbientSound(options: AmbientSoundOptions = {}) {
         }
     }, [audioSrc, volume, fadeInDuration, createSynthesizedAmbient]);
 
-    // Request play — may be deferred until user interaction
+    // Request play — called automatically by the page, but deferred until user gesture if blocked
     const play = useCallback(() => {
-        if (isInitialized.current) {
-            initAndPlay();
-            return;
-        }
-        // Try to create AudioContext — if browser blocks, set pending
-        try {
-            initAndPlay();
-        } catch {
-            pendingPlay.current = true;
-        }
+        shouldPlayRef.current = true;
+        // Try playing immediately (works on localhost or if user clicked already)
+        initAndPlay();
     }, [initAndPlay]);
 
-    // Listen for first user interaction to unlock audio if pending
+    // Listen for first user interaction to unlock audio if it was requested but deferred
     useEffect(() => {
-        const unlockAudio = () => {
-            if (pendingPlay.current && !isInitialized.current) {
+        const handleUserGesture = () => {
+            if (shouldPlayRef.current && !isInitialized.current) {
                 initAndPlay();
-            }
-            // Also resume suspended context
-            if (audioContextRef.current?.state === "suspended") {
-                audioContextRef.current.resume();
+            } else if (isInitialized.current && audioContextRef.current?.state === "suspended") {
+                // Resume on user interaction if suspended
+                audioContextRef.current.resume().then(() => {
+                    if (masterGainRef.current && audioContextRef.current) {
+                        masterGainRef.current.gain.cancelScheduledValues(audioContextRef.current.currentTime);
+                        masterGainRef.current.gain.linearRampToValueAtTime(
+                            isMuted ? 0 : volume,
+                            audioContextRef.current.currentTime + 0.5
+                        );
+                    }
+                });
             }
         };
 
-        document.addEventListener("click", unlockAudio, { once: false });
-        document.addEventListener("touchstart", unlockAudio, { once: false });
-        document.addEventListener("keydown", unlockAudio, { once: false });
+        const events = ["click", "touchstart", "keydown", "mousedown"];
+        events.forEach(event => document.addEventListener(event, handleUserGesture, { passive: true }));
 
         return () => {
-            document.removeEventListener("click", unlockAudio);
-            document.removeEventListener("touchstart", unlockAudio);
-            document.removeEventListener("keydown", unlockAudio);
+            events.forEach(event => document.removeEventListener(event, handleUserGesture));
         };
-    }, [initAndPlay]);
+    }, [initAndPlay, volume, isMuted]);
 
     const toggleMute = useCallback(() => {
+        // If not initialized, initialize it right now since we are in a click event
         if (!isInitialized.current) {
-            // First interaction — initialize and play
+            shouldPlayRef.current = true;
             initAndPlay();
             return;
         }
-
-        if (!audioContextRef.current || !masterGainRef.current) return;
 
         const ctx = audioContextRef.current;
         const gain = masterGainRef.current;
+        if (!ctx || !gain) return;
 
         if (ctx.state === "suspended") {
             ctx.resume();
@@ -213,6 +198,7 @@ export function useAmbientSound(options: AmbientSoundOptions = {}) {
     }, [isMuted, volume, initAndPlay]);
 
     const stop = useCallback(() => {
+        shouldPlayRef.current = false;
         if (!audioContextRef.current || !masterGainRef.current) return;
 
         const ctx = audioContextRef.current;
@@ -223,7 +209,9 @@ export function useAmbientSound(options: AmbientSoundOptions = {}) {
         gain.gain.linearRampToValueAtTime(0, ctx.currentTime + fadeOutDuration);
 
         setTimeout(() => {
-            ctx.suspend();
+            if (ctx.state === "running") {
+                ctx.suspend();
+            }
             setIsPlaying(false);
         }, fadeOutDuration * 1000);
     }, [fadeOutDuration]);
@@ -232,7 +220,7 @@ export function useAmbientSound(options: AmbientSoundOptions = {}) {
     useEffect(() => {
         return () => {
             sourceNodesRef.current.forEach(osc => {
-                try { osc.stop(); } catch { /* already stopped */ }
+                try { osc.stop(); } catch {}
             });
             if (audioContextRef.current) {
                 audioContextRef.current.close().catch(() => {});
@@ -242,3 +230,4 @@ export function useAmbientSound(options: AmbientSoundOptions = {}) {
 
     return { play, stop, toggleMute, isPlaying, isMuted };
 }
+

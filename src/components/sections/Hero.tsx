@@ -17,7 +17,7 @@ export default function Hero() {
 
     return (
         <section ref={containerRef} className="relative h-[300vh] bg-[#121212]">
-            <div className="sticky top-0 h-[100dvh] w-full overflow-hidden">
+            <div className="sticky top-0 h-screen w-full overflow-hidden">
                 <ScrollyCanvas scrollYProgress={scrollYProgress} images={images} />
                 <HeroOverlay scrollYProgress={scrollYProgress} />
             </div>
