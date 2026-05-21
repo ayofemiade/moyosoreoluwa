@@ -17,7 +17,9 @@ export default function SkillNode({ skill, index, total, isMobile }: { skill: Sk
     // For this demo, we'll use a spiral layout.
 
     const angle = (index / total) * Math.PI * 2 * 3; // 3 spirals
-    const radius = (100 + (index * 18)) * (isMobile ? 0.40 : 1); // Expand outwards, tighter on mobile
+    const baseRadius = 100 + (index * 18);
+    const mobileRadius = Math.min(baseRadius * 0.28, 130); // Capped for small screens
+    const radius = isMobile ? mobileRadius : baseRadius;
 
     const x = Math.cos(angle) * radius;
     const y = Math.sin(angle) * (radius * (isMobile ? 1.5 : 0.6)); // Flattened circle (galaxy shape) on desktop, taller on mobile
@@ -44,12 +46,13 @@ export default function SkillNode({ skill, index, total, isMobile }: { skill: Sk
                 }}
                 whileHover={{ scale: 1.2, zIndex: 10 }}
                 className={cn(
-                    "px-4 py-2 rounded-full border backdrop-blur-sm cursor-pointer transition-colors shadow-[0_0_15px_rgba(0,0,0,0.1)]",
+                    "rounded-full border backdrop-blur-sm cursor-pointer transition-colors shadow-[0_0_15px_rgba(0,0,0,0.1)]",
+                    isMobile ? "px-2.5 py-1" : "px-4 py-2",
                     categoryColors[skill.category],
                     "hover:bg-white/10 hover:border-white/30 hover:text-white hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]"
                 )}
             >
-                <span className="text-sm font-medium whitespace-nowrap">{skill.name}</span>
+                <span className={cn("font-medium whitespace-nowrap", isMobile ? "text-xs" : "text-sm")}>{skill.name}</span>
             </motion.div>
         </motion.div>
     );

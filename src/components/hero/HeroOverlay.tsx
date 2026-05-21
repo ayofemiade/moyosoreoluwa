@@ -29,7 +29,7 @@ export default function HeroOverlay({ scrollYProgress }: HeroOverlayProps) {
                 style={{ opacity: opacity1, y: y1, filter: blur1 }}
                 className="absolute inset-0 flex flex-col items-center justify-center text-center px-6"
             >
-                <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-medium tracking-tight text-white drop-shadow-2xl">
+                <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-display font-medium tracking-tight text-white drop-shadow-2xl">
                     Moyosore.<br />
                     <span className="text-white/60">Creative Developer.</span>
                 </h1>
@@ -38,9 +38,9 @@ export default function HeroOverlay({ scrollYProgress }: HeroOverlayProps) {
             {/* Section 2: Left Aligned */}
             <motion.div 
                 style={{ opacity: opacity2, y: y2, filter: blur2 }}
-                className="absolute inset-0 flex flex-col items-start justify-center px-8 md:px-24"
+                className="absolute inset-0 flex flex-col items-start justify-center px-6 sm:px-8 md:px-24"
             >
-                <h2 className="text-3xl md:text-5xl lg:text-6xl font-display font-medium tracking-tight text-white drop-shadow-2xl max-w-3xl">
+                <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-display font-medium tracking-tight text-white drop-shadow-2xl max-w-3xl">
                     I build digital experiences.
                 </h2>
             </motion.div>
@@ -48,9 +48,9 @@ export default function HeroOverlay({ scrollYProgress }: HeroOverlayProps) {
             {/* Section 3: Right Aligned */}
             <motion.div 
                 style={{ opacity: opacity3, y: y3, filter: blur3 }}
-                className="absolute inset-0 flex flex-col items-end justify-center text-right px-8 md:px-24"
+                className="absolute inset-0 flex flex-col items-end justify-center text-right px-6 sm:px-8 md:px-24"
             >
-                <h2 className="text-3xl md:text-5xl lg:text-6xl font-display font-medium tracking-tight text-white drop-shadow-2xl max-w-3xl">
+                <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-display font-medium tracking-tight text-white drop-shadow-2xl max-w-3xl">
                     Bridging design<br />and engineering.
                 </h2>
             </motion.div>

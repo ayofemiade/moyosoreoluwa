@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 
 const FRAME_COUNT = 120;
-const FRAME_PREFIX = "/sequence";
+const DESKTOP_PREFIX = "/sequence";
+const MOBILE_PREFIX = "/sequence_mobile";
 
 let loadedImages: HTMLImageElement[] = [];
 let loadPromise: Promise<void> | null = null;
@@ -14,11 +15,19 @@ type ProgressSubscriber = (progress: number) => void;
 const subscribers = new Set<ProgressSubscriber>();
 
 if (typeof window !== "undefined") {
+    const isMobile = window.innerWidth < 768;
+    const initialPrefix = isMobile ? MOBILE_PREFIX : DESKTOP_PREFIX;
+
     loadPromise = new Promise((resolve) => {
         for (let i = 0; i < FRAME_COUNT; i++) {
             const img = new Image();
             const frameIndex = i.toString().padStart(3, "0");
-            img.src = `${FRAME_PREFIX}/frame_${frameIndex}_delay-0.067s.webp`;
+            
+            let hasTriedFallback = false;
+
+            const attemptLoad = (prefix: string) => {
+                img.src = `${prefix}/frame_${frameIndex}_delay-0.067s.webp`;
+            };
             
             const onComplete = () => {
                 globalLoadedCount++;
@@ -32,8 +41,16 @@ if (typeof window !== "undefined") {
             };
             
             img.onload = onComplete;
-            img.onerror = onComplete; // handle error silently to not block
+            img.onerror = () => {
+                if (isMobile && !hasTriedFallback) {
+                    hasTriedFallback = true;
+                    attemptLoad(DESKTOP_PREFIX);
+                } else {
+                    onComplete();
+                }
+            };
 
+            attemptLoad(initialPrefix);
             loadedImages.push(img);
         }
     });
