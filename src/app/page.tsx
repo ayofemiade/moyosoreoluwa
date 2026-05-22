@@ -7,7 +7,7 @@ import About from "@/components/sections/About";
 import Strengths from "@/components/sections/Strengths";
 import Metrics from "@/components/sections/Metrics";
 import ProjectsRail from "@/components/sections/ProjectsRail";
-import SkillsGalaxy from "@/components/sections/SkillsGalaxy";
+import SequenceExperience from "@/components/sequence/SequenceExperience";
 import Timeline from "@/components/sections/Timeline";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/layout/Footer";
@@ -43,8 +43,8 @@ export default function Home() {
           <About />
           <Strengths />
           <Metrics />
+          <SequenceExperience />
           <ProjectsRail />
-          <SkillsGalaxy />
           <Timeline />
           <Contact />
           <Footer />
