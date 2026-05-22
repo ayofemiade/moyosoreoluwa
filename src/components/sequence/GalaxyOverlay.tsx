@@ -23,9 +23,12 @@ export default function GalaxyOverlay({ scrollYProgress }: GalaxyOverlayProps) {
                 style={{ opacity: opacity1, y: y1, filter: blur1 }}
                 className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 sm:px-8"
             >
-                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-medium tracking-tight text-white drop-shadow-2xl max-w-4xl leading-tight">
+                {/* Contrast Backdrop */}
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.7)_0%,transparent_50%)] pointer-events-none" />
+                
+                <h2 className="relative z-10 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-medium tracking-tight text-white drop-shadow-[0_4px_20px_rgba(0,0,0,1)] max-w-4xl leading-tight">
                     Take a look into my world of <br className="hidden sm:block" />
-                    <span className="text-white/60">limitless possibilities.</span>
+                    <span className="text-white/60 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">limitless possibilities.</span>
                 </h2>
             </motion.div>
 
@@ -33,13 +36,18 @@ export default function GalaxyOverlay({ scrollYProgress }: GalaxyOverlayProps) {
                 style={{ opacity: opacity2, y: y2, filter: blur2 }}
                 className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 sm:px-8"
             >
-                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-medium tracking-tight text-white drop-shadow-2xl max-w-4xl leading-tight">
-                    I ship high-performance web products and <br className="hidden sm:block" />
-                    <span className="text-accent/90">real-time AI systems</span> that feel instant.
-                </h2>
-                <p className="mt-6 sm:mt-8 text-sm sm:text-base md:text-xl text-white/50 max-w-2xl font-light tracking-wide">
-                    Founder mindset. I don't just write code; I launch products that get users.
-                </p>
+                {/* Contrast Backdrop */}
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.7)_0%,transparent_60%)] pointer-events-none" />
+                
+                <div className="relative z-10 flex flex-col items-center">
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-medium tracking-tight text-white drop-shadow-[0_4px_25px_rgba(0,0,0,1)] max-w-4xl leading-tight">
+                        I ship high-performance web products and <br className="hidden sm:block" />
+                        <span className="text-accent drop-shadow-[0_4px_20px_rgba(0,0,0,1)]">real-time AI systems</span> that feel instant.
+                    </h2>
+                    <p className="mt-6 sm:mt-8 text-sm sm:text-base md:text-xl text-white/80 drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)] max-w-2xl font-medium tracking-wide">
+                        Founder mindset. I don't just write code; I launch products that get users.
+                    </p>
+                </div>
             </motion.div>
         </div>
     );

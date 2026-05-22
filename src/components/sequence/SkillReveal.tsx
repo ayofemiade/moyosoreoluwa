@@ -50,8 +50,9 @@ export default function SkillReveal({ scrollYProgress }: SkillRevealProps) {
                     const fade = 0.65;
                     const end = 0.70;
 
+                    // Opacity peaks at 1 for maximum visibility, rather than being capped by depth
                     // eslint-disable-next-line react-hooks/rules-of-hooks
-                    const opacity = useTransform(scrollYProgress, [start, peak, fade, end], [0, skill.depth, skill.depth, 0]);
+                    const opacity = useTransform(scrollYProgress, [start, peak, fade, end], [0, 1, 1, 0]);
                     
                     // Simulate moving through space (translateZ) instead of just scaling
                     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -83,7 +84,7 @@ export default function SkillReveal({ scrollYProgress }: SkillRevealProps) {
                                 left: skill.left,
                                 transformStyle: "preserve-3d"
                             }}
-                            className="absolute text-white/90 font-mono tracking-widest text-xs sm:text-sm md:text-base drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+                            className="absolute text-white font-mono tracking-widest text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold drop-shadow-[0_0_25px_rgba(255,255,255,1)]"
                         >
                             {skill.name}
                         </motion.div>
