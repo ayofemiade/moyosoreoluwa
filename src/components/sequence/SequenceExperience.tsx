@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { useScroll } from "framer-motion";
+import { useScroll, motion, useTransform } from "framer-motion";
 import { useSequencePreloader } from "./useSequencePreloader";
 import { useSmoothScrub } from "./useSmoothScrub";
 import GalaxyCanvas from "./GalaxyCanvas";
@@ -22,9 +22,16 @@ export default function SequenceExperience() {
     const smoothProgress = useSmoothScrub(scrollYProgress);
     const { images } = useSequencePreloader();
 
+    // Fade in the entire sequence over the first 10% of scroll to crossfade with the Hero
+    // Fade out over the last 10% to transition smoothly into ProjectsRail
+    const opacity = useTransform(smoothProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
+
     return (
         <section ref={containerRef} className="relative h-[400vh] bg-[#121212]">
-            <div className="sticky top-0 h-screen supports-[height:100dvh]:h-[100dvh] w-full overflow-hidden">
+            <motion.div 
+                style={{ opacity }}
+                className="sticky top-0 h-screen supports-[height:100dvh]:h-[100dvh] w-full overflow-hidden z-20"
+            >
                 <GalaxyCanvas scrollYProgress={smoothProgress} images={images} />
                 
                 {/* Cinematic Overlay Layers */}
@@ -32,7 +39,7 @@ export default function SequenceExperience() {
                 <SkillReveal scrollYProgress={smoothProgress} />
                 <VortexTransition scrollYProgress={smoothProgress} />
                 <FutureCity scrollYProgress={smoothProgress} />
-            </div>
+            </motion.div>
         </section>
     );
 }

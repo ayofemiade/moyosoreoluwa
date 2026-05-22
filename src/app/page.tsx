@@ -3,11 +3,8 @@
 import { useState, useCallback } from "react";
 import CinematicIntro from "@/components/motion/CinematicIntro";
 import Hero from "@/components/sections/Hero";
-import About from "@/components/sections/About";
-import Strengths from "@/components/sections/Strengths";
-import Metrics from "@/components/sections/Metrics";
-import ProjectsRail from "@/components/sections/ProjectsRail";
 import SequenceExperience from "@/components/sequence/SequenceExperience";
+import ProjectsRail from "@/components/sections/ProjectsRail";
 import Timeline from "@/components/sections/Timeline";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/layout/Footer";
@@ -40,9 +37,6 @@ export default function Home() {
       {showContent && (
         <div className="animate-fade-in">
           <Hero />
-          <About />
-          <Strengths />
-          <Metrics />
           <SequenceExperience />
           <ProjectsRail />
           <Timeline />

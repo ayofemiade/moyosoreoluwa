@@ -34,51 +34,62 @@ export default function SkillReveal({ scrollYProgress }: SkillRevealProps) {
         setIsMobile(window.innerWidth < 768);
     }, []);
 
-    // Skills appear during the crystal scene (0.05 to 0.4 progress)
-    const containerOpacity = useTransform(scrollYProgress, [0.05, 0.1, 0.4, 0.45], [0, 1, 1, 0]);
+    // Skills appear during the vortex scene (0.4 to 0.7 progress)
+    const containerOpacity = useTransform(scrollYProgress, [0.38, 0.42, 0.68, 0.72], [0, 1, 1, 0]);
 
     return (
         <motion.div 
             style={{ opacity: containerOpacity }}
             className="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-hidden"
         >
-            {skills.map((skill, index) => {
-                // Staggered appearance based on depth and index
-                const start = 0.05 + (index * 0.01);
-                const peak = start + 0.05;
-                const fade = 0.4;
-                const end = 0.45;
+            <div className="absolute inset-0" style={{ perspective: "1000px" }}>
+                {skills.map((skill, index) => {
+                    // Shifted to the Vortex phase (scroll ~0.4 to 0.7)
+                    const start = 0.40 + (index * 0.015);
+                    const peak = start + 0.05;
+                    const fade = 0.65;
+                    const end = 0.70;
 
-                // eslint-disable-next-line react-hooks/rules-of-hooks
-                const opacity = useTransform(scrollYProgress, [start, peak, fade, end], [0, skill.depth, skill.depth, 0]);
-                // eslint-disable-next-line react-hooks/rules-of-hooks
-                const y = useTransform(scrollYProgress, [start, end], [20 * skill.depth, -50 * skill.depth]);
-                // eslint-disable-next-line react-hooks/rules-of-hooks
-                const scale = useTransform(scrollYProgress, [start, peak, fade, end], [0.8, skill.depth + 0.2, skill.depth + 0.2, 0.8]);
-                // eslint-disable-next-line react-hooks/rules-of-hooks
-                const blur = useTransform(
-                    scrollYProgress, 
-                    [start, peak, fade, end], 
-                    ["blur(10px)", `blur(${isMobile ? 0 : (1 - skill.depth) * 4}px)`, `blur(${isMobile ? 0 : (1 - skill.depth) * 4}px)`, "blur(10px)"]
-                );
+                    // eslint-disable-next-line react-hooks/rules-of-hooks
+                    const opacity = useTransform(scrollYProgress, [start, peak, fade, end], [0, skill.depth, skill.depth, 0]);
+                    
+                    // Simulate moving through space (translateZ) instead of just scaling
+                    // eslint-disable-next-line react-hooks/rules-of-hooks
+                    const translateZ = useTransform(scrollYProgress, [start, end], [-500 * skill.depth, 600 * skill.depth]);
+                    
+                    // Slight environmental rotation based on scroll to make the universe feel alive
+                    // eslint-disable-next-line react-hooks/rules-of-hooks
+                    const rotateX = useTransform(scrollYProgress, [start, end], [-10 * skill.depth, 10 * skill.depth]);
+                    // eslint-disable-next-line react-hooks/rules-of-hooks
+                    const rotateY = useTransform(scrollYProgress, [start, end], [10 * skill.depth, -10 * skill.depth]);
 
-                return (
-                    <motion.div
-                        key={skill.name}
-                        style={{ 
-                            opacity, 
-                            y, 
-                            scale,
-                            filter: blur,
-                            top: skill.top,
-                            left: skill.left
-                        }}
-                        className="absolute text-white font-mono tracking-widest text-sm sm:text-base md:text-lg"
-                    >
-                        {skill.name}
-                    </motion.div>
-                );
-            })}
+                    // eslint-disable-next-line react-hooks/rules-of-hooks
+                    const blur = useTransform(
+                        scrollYProgress, 
+                        [start, peak, fade, end], 
+                        ["blur(15px)", `blur(${isMobile ? 0 : (1 - skill.depth) * 4}px)`, `blur(${isMobile ? 0 : (1 - skill.depth) * 4}px)`, "blur(20px)"]
+                    );
+
+                    return (
+                        <motion.div
+                            key={skill.name}
+                            style={{ 
+                                opacity, 
+                                rotateX,
+                                rotateY,
+                                z: translateZ,
+                                filter: blur,
+                                top: skill.top,
+                                left: skill.left,
+                                transformStyle: "preserve-3d"
+                            }}
+                            className="absolute text-white/90 font-mono tracking-widest text-xs sm:text-sm md:text-base drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+                        >
+                            {skill.name}
+                        </motion.div>
+                    );
+                })}
+            </div>
         </motion.div>
     );
 }
