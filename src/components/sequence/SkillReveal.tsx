@@ -34,8 +34,8 @@ export default function SkillReveal({ scrollYProgress }: SkillRevealProps) {
         setIsMobile(window.innerWidth < 768);
     }, []);
 
-    // Skills appear during the vortex scene (0.4 to 0.7 progress)
-    const containerOpacity = useTransform(scrollYProgress, [0.38, 0.42, 0.68, 0.72], [0, 1, 1, 0]);
+    // Skills appear beautifully during the entire vortex scene (0.35 to 0.70)
+    const containerOpacity = useTransform(scrollYProgress, [0.30, 0.35, 0.68, 0.72], [0, 1, 1, 0]);
 
     return (
         <motion.div 
@@ -44,10 +44,10 @@ export default function SkillReveal({ scrollYProgress }: SkillRevealProps) {
         >
             <div className="absolute inset-0" style={{ perspective: "1000px" }}>
                 {skills.map((skill, index) => {
-                    // Shifted to the Vortex phase (scroll ~0.4 to 0.7)
-                    const start = 0.40 + (index * 0.015);
-                    const peak = start + 0.05;
-                    const fade = 0.65;
+                    // Distributed continuously across the vortex scroll (0.35 to 0.65)
+                    const start = 0.35 + (index * 0.015); // Last skill starts at ~0.59
+                    const peak = start + 0.04;
+                    const fade = 0.66;
                     const end = 0.70;
 
                     // Opacity peaks at 1 for maximum visibility, rather than being capped by depth

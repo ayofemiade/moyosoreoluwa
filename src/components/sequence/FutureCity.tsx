@@ -7,14 +7,15 @@ interface FutureCityProps {
 }
 
 export default function FutureCity({ scrollYProgress }: FutureCityProps) {
-    // Scene 3: City Reveal (75% to 100% scroll)
-    const opacity1 = useTransform(scrollYProgress, [0.75, 0.8, 0.9, 0.95], [0, 1, 1, 0]);
-    const y1 = useTransform(scrollYProgress, [0.75, 0.95], [40, -40]);
-    const blur1 = useTransform(scrollYProgress, [0.75, 0.8, 0.9, 0.95], ["blur(10px)", "blur(0px)", "blur(0px)", "blur(10px)"]);
+    // Scene 3: City Transition (0.75 to 0.85) - Text appears as the city comes into view
+    const opacity1 = useTransform(scrollYProgress, [0.75, 0.78, 0.82, 0.85], [0, 1, 1, 0]);
+    const y1 = useTransform(scrollYProgress, [0.75, 0.85], [40, -40]);
+    const blur1 = useTransform(scrollYProgress, [0.75, 0.78, 0.82, 0.85], ["blur(10px)", "blur(0px)", "blur(0px)", "blur(10px)"]);
 
-    const opacity2 = useTransform(scrollYProgress, [0.85, 0.9, 1], [0, 1, 1]);
-    const y2 = useTransform(scrollYProgress, [0.85, 1], [40, 0]);
-    const blur2 = useTransform(scrollYProgress, [0.85, 0.9, 1], ["blur(10px)", "blur(0px)", "blur(0px)"]);
+    // Scene 4: City Plateau (0.85 to 1.0) - Text settles solidly as the sequence concludes
+    const opacity2 = useTransform(scrollYProgress, [0.86, 0.89, 1], [0, 1, 1]);
+    const y2 = useTransform(scrollYProgress, [0.86, 1], [40, 0]);
+    const blur2 = useTransform(scrollYProgress, [0.86, 0.89, 1], ["blur(10px)", "blur(0px)", "blur(0px)"]);
 
     return (
         <div className="absolute inset-0 w-full h-full pointer-events-none z-10">

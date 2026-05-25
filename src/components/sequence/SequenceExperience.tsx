@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { useScroll, motion, useTransform } from "framer-motion";
 import { useSequencePreloader } from "./useSequencePreloader";
-import { useSmoothScrub } from "./useSmoothScrub";
+import { useCinematicOrchestrator } from "./useCinematicOrchestrator";
 import GalaxyCanvas from "./GalaxyCanvas";
 import GalaxyOverlay from "./GalaxyOverlay";
 import SkillReveal from "./SkillReveal";
@@ -19,26 +19,32 @@ export default function SequenceExperience() {
         offset: ["start start", "end end"]
     });
 
-    const smoothProgress = useSmoothScrub(scrollYProgress);
+    // Apply the exact same heavy cinematic inertia spring that makes the Hero feel perfect.
+    // By removing plateaus, the animation flows constantly without rushed jumps or hanging.
+    const orchestratedProgress = useCinematicOrchestrator(scrollYProgress, { plateaus: [] });
     const { images } = useSequencePreloader();
 
-    // Fade in the entire sequence over the first 10% of scroll to crossfade with the Hero
-    // Fade out over the last 10% to transition smoothly into ProjectsRail
-    const opacity = useTransform(smoothProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
+    // The background canvas stays pure black initially so the intro text can display alone.
+    // It fades in from 0.16 to 0.20, after the intro text has finished.
+    // Both the canvas and container fade out over the last 10% to transition into ProjectsRail.
+    const canvasOpacity = useTransform(orchestratedProgress, [0, 0.16, 0.20, 0.9, 1], [0, 0, 1, 1, 0]);
+    const containerOpacity = useTransform(orchestratedProgress, [0.9, 1], [1, 0]);
 
     return (
         <section ref={containerRef} className="relative h-[400vh] bg-[#121212]">
             <motion.div 
-                style={{ opacity }}
+                style={{ opacity: containerOpacity }}
                 className="sticky top-0 h-screen supports-[height:100dvh]:h-[100dvh] w-full overflow-hidden z-20"
             >
-                <GalaxyCanvas scrollYProgress={smoothProgress} images={images} />
+                <motion.div style={{ opacity: canvasOpacity }} className="absolute inset-0">
+                    <GalaxyCanvas scrollYProgress={orchestratedProgress} images={images} />
+                </motion.div>
                 
-                {/* Cinematic Overlay Layers */}
-                <GalaxyOverlay scrollYProgress={smoothProgress} />
-                <SkillReveal scrollYProgress={smoothProgress} />
-                <VortexTransition scrollYProgress={smoothProgress} />
-                <FutureCity scrollYProgress={smoothProgress} />
+                {/* Cinematic Overlay Layers - using orchestratedProgress ensures UI perfectly matches the canvas drift */}
+                <GalaxyOverlay scrollYProgress={orchestratedProgress} />
+                <SkillReveal scrollYProgress={orchestratedProgress} />
+                <VortexTransition scrollYProgress={orchestratedProgress} />
+                <FutureCity scrollYProgress={orchestratedProgress} />
             </motion.div>
         </section>
     );

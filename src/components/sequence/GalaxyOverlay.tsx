@@ -7,15 +7,17 @@ interface GalaxyOverlayProps {
 }
 
 export default function GalaxyOverlay({ scrollYProgress }: GalaxyOverlayProps) {
-    // Scene 1: Crystal World (0% to ~25% scroll)
-    // The narrative text appears and fades out before the vortex gets intense.
-    const opacity1 = useTransform(scrollYProgress, [0.02, 0.08, 0.15, 0.22], [0, 1, 1, 0]);
-    const y1 = useTransform(scrollYProgress, [0.02, 0.22], [40, -40]);
-    const blur1 = useTransform(scrollYProgress, [0.02, 0.08, 0.15, 0.22], ["blur(10px)", "blur(0px)", "blur(0px)", "blur(10px)"]);
+    // Scene 1: Black Void Entry (0.0 to 0.16)
+    // First text appears on pure black BEFORE the canvas fades in
+    const opacity1 = useTransform(scrollYProgress, [0.02, 0.06, 0.12, 0.16], [0, 1, 1, 0]);
+    const y1 = useTransform(scrollYProgress, [0.02, 0.16], [40, -40]);
+    const blur1 = useTransform(scrollYProgress, [0.02, 0.06, 0.12, 0.16], ["blur(10px)", "blur(0px)", "blur(0px)", "blur(10px)"]);
 
-    const opacity2 = useTransform(scrollYProgress, [0.2, 0.25, 0.35, 0.4], [0, 1, 1, 0]);
-    const y2 = useTransform(scrollYProgress, [0.2, 0.4], [40, -40]);
-    const blur2 = useTransform(scrollYProgress, [0.2, 0.25, 0.35, 0.4], ["blur(10px)", "blur(0px)", "blur(0px)", "blur(10px)"]);
+    // Scene 2: Crystal World (0.20 to 0.36)
+    // Second text appears smoothly across the crystal environment after canvas fades in
+    const opacity2 = useTransform(scrollYProgress, [0.20, 0.24, 0.32, 0.36], [0, 1, 1, 0]);
+    const y2 = useTransform(scrollYProgress, [0.20, 0.36], [40, -40]);
+    const blur2 = useTransform(scrollYProgress, [0.20, 0.24, 0.32, 0.36], ["blur(10px)", "blur(0px)", "blur(0px)", "blur(10px)"]);
 
     return (
         <div className="absolute inset-0 w-full h-full pointer-events-none z-10">
