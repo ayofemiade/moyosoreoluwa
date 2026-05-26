@@ -24,10 +24,9 @@ export default function SequenceExperience() {
     const orchestratedProgress = useCinematicOrchestrator(scrollYProgress, { plateaus: [] });
     const { images } = useSequencePreloader();
 
-    // The background canvas stays pure black initially so the intro text can display alone.
-    // It fades in from 0.16 to 0.20, after the intro text has finished.
-    // Both the canvas and container fade out over the last 10% to transition into ProjectsRail.
-    const canvasOpacity = useTransform(orchestratedProgress, [0, 0.16, 0.20, 0.9, 1], [0, 0, 1, 1, 0]);
+    // The background canvas begins partially visible to carry over atmospheric momentum from the Hero.
+    // Both the canvas and container fade out over the last 10% to transition into the monolithic City/Projects area.
+    const canvasOpacity = useTransform(orchestratedProgress, [0, 0.10, 0.9, 1], [0.3, 1, 1, 0]);
     const containerOpacity = useTransform(orchestratedProgress, [0.9, 1], [1, 0]);
 
     return (

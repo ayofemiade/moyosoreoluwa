@@ -22,10 +22,10 @@ export default function ProjectsRail() {
 
         mm.add("(min-width: 768px)", () => {
             // Calculate total width of all cards + gaps
-            // We are scrolling the 'section' horizontally
+            // We are scrolling the 'section' horizontally. No padding to account for in monolithic design.
             const scrollWidth = section.scrollWidth;
             const windowWidth = window.innerWidth;
-            const xMove = -(scrollWidth - windowWidth + 100); // 100px padding
+            const xMove = -(scrollWidth - windowWidth);
 
             const tl = gsap.timeline({
                 scrollTrigger: {
@@ -56,22 +56,24 @@ export default function ProjectsRail() {
     }, []);
 
     return (
-        <section id="projects" className="relative bg-background">
+        <section id="projects" className="relative bg-[#0a0a0a]">
             <div ref={triggerRef}>
-                <div className="min-h-screen flex flex-col justify-center py-20 w-full overflow-hidden">
-                    <div className="container mx-auto px-6 mb-8">
-                        <h2 className="text-sm font-mono uppercase tracking-widest text-muted-foreground mb-4">Selected Work</h2>
-                        <p className="text-2xl md:text-5xl font-display font-medium max-w-full md:max-w-4xl break-words">
-                            Engineering experiences that define brands.
-                        </p>
-                    </div>
-
+                <div className="h-screen supports-[height:100dvh]:h-[100dvh] flex flex-col justify-center w-full overflow-hidden">
                     <div
                         ref={sectionRef}
-                        className="flex flex-col md:flex-row gap-8 px-6 w-full md:w-max"
+                        className="flex flex-col md:flex-row h-full w-full md:w-max"
                     >
+                        {/* Architectural Intro Panel */}
+                        <div className="w-full md:w-[600px] h-[40vh] md:h-full flex flex-col justify-center md:justify-end p-8 md:p-16 border-b md:border-b-0 md:border-r border-white/10 shrink-0">
+                            <h2 className="text-[10px] font-mono uppercase tracking-[0.3em] text-white/50 mb-6 md:mb-8">Selected Work</h2>
+                            <p className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-display font-medium text-white max-w-full break-words leading-tight tracking-tight">
+                                Built realities. <br />
+                                <span className="text-white/40">Not just concepts.</span>
+                            </p>
+                        </div>
+
                         {PROJECTS.map((project) => (
-                            <ProjectCard key={project.slug} project={project} />
+                            <ProjectCard key={project.slug} project={project} className="shrink-0" />
                         ))}
                     </div>
                 </div>

@@ -2,8 +2,7 @@
 
 import { useState, useCallback } from "react";
 import CinematicIntro from "@/components/motion/CinematicIntro";
-import Hero from "@/components/sections/Hero";
-import SequenceExperience from "@/components/sequence/SequenceExperience";
+import CinematicJourney from "@/components/sequence/CinematicJourney";
 import ProjectsRail from "@/components/sections/ProjectsRail";
 import Timeline from "@/components/sections/Timeline";
 import Contact from "@/components/sections/Contact";
@@ -36,8 +35,7 @@ export default function Home() {
 
       {showContent && (
         <div className="animate-fade-in">
-          <Hero />
-          <SequenceExperience />
+          <CinematicJourney />
           <ProjectsRail />
           <Timeline />
           <Contact />

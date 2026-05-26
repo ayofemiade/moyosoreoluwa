@@ -45,20 +45,18 @@ export default function SkillReveal({ scrollYProgress }: SkillRevealProps) {
             <div className="absolute inset-0" style={{ perspective: "1000px" }}>
                 {skills.map((skill, index) => {
                     // Distributed continuously across the vortex scroll (0.35 to 0.65)
-                    const start = 0.35 + (index * 0.015); // Last skill starts at ~0.59
+                    const start = 0.35 + (index * 0.015);
                     const peak = start + 0.04;
                     const fade = 0.66;
                     const end = 0.70;
 
-                    // Opacity peaks at 1 for maximum visibility, rather than being capped by depth
+                    // Opacity peaks higher (1.0) so it's clearly visible against the blurred hero background
                     // eslint-disable-next-line react-hooks/rules-of-hooks
                     const opacity = useTransform(scrollYProgress, [start, peak, fade, end], [0, 1, 1, 0]);
                     
-                    // Simulate moving through space (translateZ) instead of just scaling
                     // eslint-disable-next-line react-hooks/rules-of-hooks
                     const translateZ = useTransform(scrollYProgress, [start, end], [-500 * skill.depth, 600 * skill.depth]);
                     
-                    // Slight environmental rotation based on scroll to make the universe feel alive
                     // eslint-disable-next-line react-hooks/rules-of-hooks
                     const rotateX = useTransform(scrollYProgress, [start, end], [-10 * skill.depth, 10 * skill.depth]);
                     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -71,6 +69,13 @@ export default function SkillReveal({ scrollYProgress }: SkillRevealProps) {
                         ["blur(15px)", `blur(${isMobile ? 0 : (1 - skill.depth) * 4}px)`, `blur(${isMobile ? 0 : (1 - skill.depth) * 4}px)`, "blur(20px)"]
                     );
 
+                    const leftVal = parseInt(skill.left);
+                    const isRightAligned = leftVal > 50;
+
+                    const positionStyle = isRightAligned 
+                        ? { right: `${100 - leftVal}%` } 
+                        : { left: skill.left };
+
                     return (
                         <motion.div
                             key={skill.name}
@@ -81,12 +86,27 @@ export default function SkillReveal({ scrollYProgress }: SkillRevealProps) {
                                 z: translateZ,
                                 filter: blur,
                                 top: skill.top,
-                                left: skill.left,
+                                ...positionStyle,
                                 transformStyle: "preserve-3d"
                             }}
-                            className="absolute text-white font-mono tracking-widest text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold drop-shadow-[0_0_25px_rgba(255,255,255,1)]"
+                            className={`absolute flex items-center gap-2 md:gap-4 text-white ${isRightAligned ? 'flex-row-reverse' : 'flex-row'}`}
                         >
-                            {skill.name}
+                            {/* Glowing Node */}
+                            <div className="relative flex items-center justify-center flex-shrink-0">
+                                <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-white shadow-[0_0_15px_rgba(255,255,255,1)]" />
+                                <div className="absolute w-6 h-6 md:w-10 md:h-10 rounded-full border border-white/40 animate-ping" style={{ animationDuration: '3s' }} />
+                            </div>
+                            
+                            {/* Technical Readout Typography */}
+                            <div className={`flex flex-col ${isRightAligned ? 'items-end text-right' : 'items-start text-left'}`}>
+                                <span className="font-mono text-[10px] md:text-xs uppercase tracking-[0.25em] text-white/70">SYS.NODE</span>
+                                <span className="font-display text-base sm:text-xl md:text-2xl lg:text-3xl uppercase tracking-[0.1em] font-medium text-white drop-shadow-[0_2px_20px_rgba(255,255,255,1)] whitespace-nowrap">
+                                    {skill.name}
+                                </span>
+                            </div>
+                            
+                            {/* Decorative Line to simulate connections */}
+                            <div className={`hidden sm:block w-16 md:w-32 h-[1px] ${isRightAligned ? 'bg-gradient-to-l mr-2 md:mr-4' : 'bg-gradient-to-r ml-2 md:ml-4'} from-white/40 to-transparent flex-shrink-0`} />
                         </motion.div>
                     );
                 })}

@@ -13,7 +13,8 @@ export default function Navbar() {
 
     useMotionValueEvent(scrollY, "change", (latest) => {
         if (typeof window !== "undefined") {
-            setIsScrolledPastHero(latest > window.innerHeight * 2.8);
+            // Wait until after the entire CinematicJourney (800vh) before switching to the light navbar theme
+            setIsScrolledPastHero(latest > window.innerHeight * 7.9);
         }
     });
 
