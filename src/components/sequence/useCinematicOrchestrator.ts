@@ -48,11 +48,12 @@ export function useCinematicOrchestrator(
 
     // 2. Inertia Spring: This smooths out the "staircase" so the transitions feel
     // like massive cinematic glides rather than harsh snap jumps.
-    // Highly damped, low stiffness creates a very elegant, slow-settling momentum.
+    // Extremely damped, heavy mass creates a very elegant, slow-settling momentum
+    // that beautifully cushions fast scrolling on mobile devices.
     return useSpring(gravityMappedProgress, {
-        stiffness: 30, // Low stiffness = slow, majestic movement
-        damping: 15,   // High damping relative to stiffness = no bouncing, just smooth settling
-        mass: 0.2,     // Adds a feeling of heavy momentum
+        stiffness: 25, // Very low stiffness = slow, majestic movement
+        damping: 20,   // High damping = no bounce, pure slow syrup
+        mass: 0.8,     // Heavy mass = massive inertia, ignores sudden fast flicks
         restDelta: 0.0001
     });
 }

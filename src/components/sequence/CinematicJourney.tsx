@@ -22,7 +22,28 @@ export default function CinematicJourney() {
         offset: ["start start", "end end"]
     });
 
-    const orchestratedProgress = useCinematicOrchestrator(scrollYProgress, { plateaus: [] });
+    // Checkpoint Gravity Mapping
+    // This intercepts the raw scroll and creates "plateaus" where the output progress pauses.
+    // This guarantees the cinematic text scenes are perfectly paced and cannot be skipped instantly.
+    const orchestratedProgress = useCinematicOrchestrator(scrollYProgress, { 
+        plateaus: [
+            // Scene 1: "Take a look into my world of possibilities"
+            // Settles sequenceProgress around 0.10
+            { inputStart: 0.48, inputEnd: 0.54, outputValue: 0.50 },
+            
+            // Scene 2: "I ship high-performance web products"
+            // Settles sequenceProgress around 0.30
+            { inputStart: 0.58, inputEnd: 0.64, outputValue: 0.60 },
+            
+            // Scene 3: Skills Vortex
+            // Settles sequenceProgress around 0.55
+            { inputStart: 0.70, inputEnd: 0.76, outputValue: 0.725 },
+            
+            // Scene 4: "From ideas to realities"
+            // Settles sequenceProgress around 0.88
+            { inputStart: 0.86, inputEnd: 0.92, outputValue: 0.89 }
+        ] 
+    });
 
     // 0 -> 0.35 is Hero (approx 280vh of scroll)
     // 0.45 -> 0.95 is Sequence Overlays (approx 400vh of scroll)
