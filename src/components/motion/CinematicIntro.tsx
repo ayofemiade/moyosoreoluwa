@@ -92,7 +92,7 @@ export default function CinematicIntro({ onComplete, onEnter }: CinematicIntroPr
                                     </div>
 
                                     <span className="text-xs text-white/30 uppercase tracking-[0.3em] font-light">
-                                        Loading experience
+                                        {progress < 17 ? "Preparing experience" : "Almost ready"}
                                     </span>
                                 </motion.div>
                             ) : (
