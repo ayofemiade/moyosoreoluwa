@@ -10,6 +10,7 @@ const FILTERS = ["All", "AI Agents", "Frontend", "Full-Stack"];
 export default function ProjectsPage() {
     const [filter, setFilter] = useState("All");
     const [search, setSearch] = useState("");
+    const [hoveredSlug, setHoveredSlug] = useState<string | null>(null);
 
     const filteredProjects = PROJECTS.filter((p) => {
         const matchesFilter = filter === "All" || p.tags.some(t => {
@@ -68,8 +69,15 @@ export default function ProjectsPage() {
 
             {/* Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-32">
-                {filteredProjects.map(project => (
-                    <ProjectCard key={project.slug} project={project} className="md:!w-full" />
+                {filteredProjects.map((project, index) => (
+                    <ProjectCard
+                        key={project.slug}
+                        project={project}
+                        index={index}
+                        className="md:!w-full"
+                        isHovered={hoveredSlug === project.slug}
+                        onHover={setHoveredSlug}
+                    />
                 ))}
 
                 {filteredProjects.length === 0 && (

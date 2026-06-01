@@ -9,7 +9,9 @@ export interface Project {
         demo?: string;
         github?: string;
     };
-    image: string; // Placeholder color or path
+    image: string;        // Path to ambient preview image
+    accentColor: string;  // CSS color for accent line and glows
+    glowColor: string;    // RGBA for the full-screen ambient atmosphere
     stats?: { label: string; value: string }[];
 }
 
@@ -22,7 +24,9 @@ export const PROJECTS: Project[] = [
         tags: ["Next.js", "Python", "LiveKit", "AI"],
         year: "2025",
         links: { demo: "https://convergs-ai-tdno.vercel.app/" },
-        image: "bg-indigo-500", // Will replace with real image later
+        image: "/projects/convergs-ai.png",
+        accentColor: "#818cf8",
+        glowColor: "rgba(99, 102, 241, 0.15)",
         stats: [
             { label: "Latency", value: "<500ms" },
             { label: "Users", value: "Beta" }
@@ -36,7 +40,9 @@ export const PROJECTS: Project[] = [
         tags: ["Next.js", "Recharts", "Algorithm"],
         year: "2024",
         links: { demo: "https://resobridge.netlify.app/" },
-        image: "bg-orange-500",
+        image: "/projects/resobridge.png",
+        accentColor: "#f97316",
+        glowColor: "rgba(249, 115, 22, 0.15)",
         stats: [
             { label: "Efficiency", value: "+40%" }
         ]
@@ -49,7 +55,9 @@ export const PROJECTS: Project[] = [
         tags: ["Next.js", "Tailwind", "Supabase"],
         year: "2025",
         links: { demo: "https://sbofoundation.ng/" },
-        image: "bg-green-600",
+        image: "/projects/sbo-foundation.png",
+        accentColor: "#34d399",
+        glowColor: "rgba(52, 211, 153, 0.15)",
         stats: [
             { label: "Monthly Users", value: "50+" },
             { label: "Donations", value: "$5k+" }
@@ -63,7 +71,9 @@ export const PROJECTS: Project[] = [
         tags: ["React", "Node.js", "PostgreSQL"],
         year: "2024",
         links: { demo: "https://www.locoba.org/" },
-        image: "bg-blue-600",
+        image: "/projects/locoba.png",
+        accentColor: "#60a5fa",
+        glowColor: "rgba(96, 165, 250, 0.15)",
         stats: [
             { label: "Records", value: "200+" },
             { label: "Events", value: "10+" }

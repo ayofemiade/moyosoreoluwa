@@ -7,15 +7,15 @@ interface FutureCityProps {
 }
 
 export default function FutureCity({ scrollYProgress }: FutureCityProps) {
-    // The glass pill appears early and slowly glides into position
-    const opacity1 = useTransform(scrollYProgress, [0.72, 0.78], [0, 1]);
-    const y1 = useTransform(scrollYProgress, [0.72, 0.85], [60, 0]);
-    const blur1 = useTransform(scrollYProgress, [0.72, 0.78], ["blur(15px)", "blur(0px)"]);
+    // The glass pill appears early, glides into position, and then fades/slides up at the end
+    const opacity1 = useTransform(scrollYProgress, [0.72, 0.78, 0.92, 0.98], [0, 1, 1, 0]);
+    const y1 = useTransform(scrollYProgress, [0.72, 0.85, 0.92, 0.98], [60, 0, 0, -40]);
+    const blur1 = useTransform(scrollYProgress, [0.72, 0.78, 0.92, 0.98], ["blur(15px)", "blur(0px)", "blur(0px)", "blur(15px)"]);
 
-    // The main headline appears shortly after, completing the massive composition
-    const opacity2 = useTransform(scrollYProgress, [0.80, 0.86], [0, 1]);
-    const y2 = useTransform(scrollYProgress, [0.80, 0.90], [60, 0]);
-    const blur2 = useTransform(scrollYProgress, [0.80, 0.86], ["blur(15px)", "blur(0px)"]);
+    // The main headline appears shortly after, and fades/slides up at the end matching the pill
+    const opacity2 = useTransform(scrollYProgress, [0.80, 0.86, 0.92, 0.98], [0, 1, 1, 0]);
+    const y2 = useTransform(scrollYProgress, [0.80, 0.90, 0.92, 0.98], [60, 0, 0, -40]);
+    const blur2 = useTransform(scrollYProgress, [0.80, 0.86, 0.92, 0.98], ["blur(15px)", "blur(0px)", "blur(0px)", "blur(15px)"]);
 
     return (
         <div className="absolute inset-0 w-full h-full pointer-events-none z-10 flex flex-col items-center justify-center gap-8 md:gap-12 px-6 sm:px-8 pb-20 md:pb-32">

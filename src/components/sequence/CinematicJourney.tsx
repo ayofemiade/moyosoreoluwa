@@ -59,19 +59,23 @@ export default function CinematicJourney() {
     // The overlays fade in smoothly as the blur completes
     const sequenceOpacity = useTransform(orchestratedProgress, [0.40, 0.45], [0, 1]);
 
-    // Final fade out for transition to the Projects monolithic rail
-    const globalOpacity = useTransform(orchestratedProgress, [0.95, 1], [1, 0]);
+    // Seamless background morph: the blurred atmospheric background layer (canvas + overlays)
+    // fades out smoothly at the very end of the scroll, leaving a clean solid bg-[#121212]
+    // that connects perfectly to the incoming Projects rail.
+    const backgroundOpacity = useTransform(orchestratedProgress, [0.94, 0.98], [1, 0]);
 
     const { images: heroImages } = useFramePreloader();
 
     return (
         <section ref={containerRef} className="relative h-[800vh] bg-[#121212]">
-            <motion.div 
-                style={{ opacity: globalOpacity }}
+            <div 
                 className="sticky top-0 h-screen supports-[height:100dvh]:h-[100dvh] w-full overflow-hidden"
             >
                 {/* Unified Atmospheric Environment (Hero Canvas) */}
-                <motion.div style={{ filter: heroBlur }} className="absolute inset-0">
+                <motion.div 
+                    style={{ filter: heroBlur, opacity: backgroundOpacity }} 
+                    className="absolute inset-0"
+                >
                     <ScrollyCanvas scrollYProgress={heroProgress} images={heroImages} />
                     
                     {/* Darken overlay to make white text pop during the deep blur phase */}
@@ -91,7 +95,7 @@ export default function CinematicJourney() {
                     <VortexTransition scrollYProgress={sequenceProgress} />
                     <FutureCity scrollYProgress={sequenceProgress} />
                 </motion.div>
-            </motion.div>
+            </div>
         </section>
     );
 }
