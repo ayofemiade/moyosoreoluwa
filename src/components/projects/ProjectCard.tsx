@@ -1,10 +1,11 @@
 "use client";
 
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Project } from "@/content/projects";
 import { cn } from "@/lib/utils";
+import { useEffect, useRef, useState } from "react";
 
 interface ProjectCardProps {
     project: Project;
@@ -16,15 +17,31 @@ interface ProjectCardProps {
 
 export default function ProjectCard({ project, index, className, isHovered, onHover }: ProjectCardProps) {
     const indexLabel = String(index + 1).padStart(2, "0");
+    const cardRef = useRef<HTMLAnchorElement>(null);
+    const isInView = useInView(cardRef, { margin: "-40% 0px -40% 0px" });
+    const [isTouch, setIsTouch] = useState(false);
+
+    useEffect(() => {
+        setIsTouch(window.matchMedia("(hover: none)").matches || window.innerWidth < 768);
+    }, []);
+
+    useEffect(() => {
+        if (isTouch && isInView) {
+            onHover(project.slug);
+        }
+    }, [isTouch, isInView, onHover, project.slug]);
+
+    const activeState = isTouch ? isInView : isHovered;
 
     return (
         <Link
+            ref={cardRef}
             href={`/projects/${project.slug}`}
             className={cn("block group relative", className)}
-            onMouseEnter={() => onHover(project.slug)}
-            onMouseLeave={() => onHover(null)}
-            onFocus={() => onHover(project.slug)}
-            onBlur={() => onHover(null)}
+            onMouseEnter={() => !isTouch && onHover(project.slug)}
+            onMouseLeave={() => !isTouch && onHover(null)}
+            onFocus={() => !isTouch && onHover(project.slug)}
+            onBlur={() => !isTouch && onHover(null)}
         >
             {/* Full-height cinematic card container */}
             <div className="relative h-[80vh] md:h-screen supports-[height:100dvh]:h-[100dvh] w-full md:w-[780px] border-b md:border-b-0 md:border-r border-white/[0.06] flex flex-col justify-end overflow-hidden">
@@ -33,7 +50,7 @@ export default function ProjectCard({ project, index, className, isHovered, onHo
                 <motion.div
                     className="absolute inset-0"
                     initial={{ opacity: 0, scale: 1.08 }}
-                    animate={isHovered
+                    animate={activeState
                         ? { opacity: 1, scale: 1.0 }
                         : { opacity: 0, scale: 1.08 }
                     }
@@ -52,7 +69,7 @@ export default function ProjectCard({ project, index, className, isHovered, onHo
                 <motion.div
                     className="absolute inset-0 pointer-events-none"
                     initial={{ opacity: 0 }}
-                    animate={{ opacity: isHovered ? 1 : 0 }}
+                    animate={{ opacity: activeState ? 1 : 0 }}
                     transition={{ duration: 0.7 }}
                     style={{
                         background: `radial-gradient(ellipse at 50% 80%, ${project.glowColor} 0%, transparent 70%)`
@@ -63,7 +80,7 @@ export default function ProjectCard({ project, index, className, isHovered, onHo
                 <div className="absolute top-8 md:top-12 left-8 md:left-12 right-8 md:right-12 flex justify-between items-start">
                     <motion.span
                         className="font-mono text-[10px] uppercase tracking-[0.35em]"
-                        animate={{ color: isHovered ? project.accentColor : "rgba(255,255,255,0.2)" }}
+                        animate={{ color: activeState ? project.accentColor : "rgba(255,255,255,0.2)" }}
                         transition={{ duration: 0.5 }}
                     >
                         {indexLabel}
@@ -73,7 +90,7 @@ export default function ProjectCard({ project, index, className, isHovered, onHo
                             <motion.span
                                 key={tag}
                                 className="font-mono text-[9px] md:text-[10px] uppercase tracking-[0.25em]"
-                                animate={{ color: isHovered ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.25)" }}
+                                animate={{ color: activeState ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.25)" }}
                                 transition={{ duration: 0.4 }}
                             >
                                 {tag}
@@ -92,7 +109,7 @@ export default function ProjectCard({ project, index, className, isHovered, onHo
                             className="absolute inset-y-0 left-0 h-full"
                             style={{ backgroundColor: project.accentColor }}
                             initial={{ scaleX: 0, originX: 0 }}
-                            animate={{ scaleX: isHovered ? 1 : 0 }}
+                            animate={{ scaleX: activeState ? 1 : 0 }}
                             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                         />
                     </div>
@@ -100,7 +117,7 @@ export default function ProjectCard({ project, index, className, isHovered, onHo
                     {/* Year */}
                     <motion.span
                         className="font-mono text-[10px] uppercase tracking-[0.3em]"
-                        animate={{ color: isHovered ? project.accentColor : "rgba(255,255,255,0.25)" }}
+                        animate={{ color: activeState ? project.accentColor : "rgba(255,255,255,0.25)" }}
                         transition={{ duration: 0.4 }}
                     >
                         {project.year}
@@ -109,10 +126,10 @@ export default function ProjectCard({ project, index, className, isHovered, onHo
                     {/* Project Title */}
                     <motion.h3
                         className="font-display font-medium tracking-tighter leading-none text-white"
-                        style={{ fontSize: "clamp(2.5rem, 6vw, 5.5rem)" }}
+                        style={{ fontSize: "clamp(2rem, 8vw, 5.5rem)" }}
                         animate={{
-                            x: isHovered ? 8 : 0,
-                            opacity: isHovered ? 1 : 0.4
+                            x: activeState ? 8 : 0,
+                            opacity: activeState ? 1 : 0.4
                         }}
                         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                     >
@@ -123,7 +140,7 @@ export default function ProjectCard({ project, index, className, isHovered, onHo
                     <motion.div
                         className="flex justify-between items-end gap-4"
                         initial={{ y: 12, opacity: 0 }}
-                        animate={isHovered ? { y: 0, opacity: 1 } : { y: 12, opacity: 0 }}
+                        animate={activeState ? { y: 0, opacity: 1 } : { y: 12, opacity: 0 }}
                         transition={{ duration: 0.5, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
                     >
                         <p className="text-white/60 text-base md:text-xl font-light leading-snug max-w-xs md:max-w-sm">
@@ -133,12 +150,12 @@ export default function ProjectCard({ project, index, className, isHovered, onHo
                         <motion.div
                             className="w-10 h-10 md:w-14 md:h-14 rounded-full border flex items-center justify-center shrink-0 transition-colors duration-500"
                             style={{ borderColor: project.accentColor }}
-                            animate={{ backgroundColor: isHovered ? project.accentColor : "transparent" }}
+                            animate={{ backgroundColor: activeState ? project.accentColor : "transparent" }}
                             transition={{ duration: 0.4 }}
                         >
                             <ArrowUpRight
                                 className="w-5 h-5 md:w-6 md:h-6"
-                                style={{ color: isHovered ? "#000" : project.accentColor }}
+                                style={{ color: activeState ? "#000" : project.accentColor }}
                             />
                         </motion.div>
                     </motion.div>
@@ -148,7 +165,7 @@ export default function ProjectCard({ project, index, className, isHovered, onHo
                         <motion.div
                             className="grid grid-cols-2 gap-4 md:gap-8 pt-4 md:pt-6 border-t border-white/[0.07]"
                             initial={{ y: 16, opacity: 0 }}
-                            animate={isHovered ? { y: 0, opacity: 1 } : { y: 16, opacity: 0 }}
+                            animate={activeState ? { y: 0, opacity: 1 } : { y: 16, opacity: 0 }}
                             transition={{ duration: 0.5, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
                         >
                             {project.stats.map(stat => (
