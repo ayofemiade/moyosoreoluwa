@@ -52,9 +52,9 @@ export default function Timeline() {
                         transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
                     >
                         <div
-                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[75vw] h-[75vw] rounded-full opacity-40 transition-colors duration-1000 will-change-transform"
+                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[75vw] h-[75vw] rounded-full opacity-[0.15] dark:opacity-40 transition-colors duration-1000 will-change-transform mix-blend-multiply dark:mix-blend-screen"
                             style={{
-                                background: `radial-gradient(circle, ${activeItem.accentColor}55 0%, ${activeItem.accentColor}10 40%, transparent 70%)`
+                                background: `radial-gradient(circle, ${activeItem.accentColor}66 0%, ${activeItem.accentColor}20 40%, transparent 70%)`
                             }}
                         />
                     </motion.div>
@@ -91,15 +91,15 @@ export default function Timeline() {
                     {/* Cybernetic Spine Connector */}
                     <div className="hidden md:flex absolute left-1/2 top-4 bottom-4 w-10 -translate-x-1/2 overflow-hidden justify-center z-0">
                         {/* Background track */}
-                        <div className="absolute inset-y-0 w-[1px] bg-foreground/10" />
+                        <div className="absolute inset-y-0 w-[1px] bg-foreground/[0.08] dark:bg-foreground/10" />
                         
                         {/* High-energy Laser Laser Core */}
                         <motion.div 
                             style={{ y: useTransform(laserScaleY, s => `${(s - 1) * 100}%`) }} 
-                            className="w-[2px] h-full bg-gradient-to-b from-transparent via-foreground to-transparent shadow-md dark:shadow-[0_0_15px_rgba(255,255,255,1)] relative will-change-transform"
+                            className="w-[2px] h-full bg-gradient-to-b from-transparent via-foreground/40 dark:via-foreground to-transparent shadow-sm dark:shadow-[0_0_15px_rgba(255,255,255,1)] relative will-change-transform"
                         >
                             {/* Moving spark node */}
-                            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-foreground shadow-sm dark:shadow-[0_0_20px_#fff]" />
+                            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-foreground shadow-[0_0_10px_rgba(0,0,0,0.2)] dark:shadow-[0_0_20px_#fff]" />
                         </motion.div>
                     </div>
 
@@ -251,7 +251,7 @@ function TimelineRow({ item, index, activeIndex, onFocus }: TimelineRowProps) {
                     onMouseLeave={handleMouseLeave}
                     whileHover={{ 
                         scale: 1.05, 
-                        boxShadow: "0 30px 60px -15px rgba(0, 0, 0, 0.6)",
+                        boxShadow: "0 30px 60px -15px rgba(0, 0, 0, 0.1)",
                     }}
                     style={{ 
                         rotateX, 
@@ -260,76 +260,86 @@ function TimelineRow({ item, index, activeIndex, onFocus }: TimelineRowProps) {
                         y: combinedCardY,
                         transformStyle: "preserve-3d" 
                     }}
-                    className="group cursor-pointer relative bg-foreground/[0.03] border border-foreground/[0.04] hover:border-foreground/[0.09] backdrop-blur-md rounded-2xl p-8 md:p-10 shadow-2xl overflow-hidden transition-colors duration-500 will-change-transform"
+                    className="group cursor-pointer relative bg-white/70 dark:bg-foreground/[0.03] border border-black/[0.06] dark:border-foreground/[0.04] hover:border-black/[0.15] dark:hover:border-foreground/[0.12] backdrop-blur-xl rounded-3xl p-10 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-2xl overflow-hidden transition-all duration-500 will-change-transform"
                 >
                     {/* Glowing card base background grid effect */}
                     <div 
-                        className="absolute inset-0 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity pointer-events-none"
+                        className="absolute inset-0 opacity-[0.03] dark:opacity-[0.03] group-hover:opacity-[0.05] transition-opacity pointer-events-none"
                         style={{
                             backgroundImage: "radial-gradient(var(--foreground) 1px, transparent 1px)",
                             backgroundSize: "20px 20px"
                         }}
                     />
 
-                    {/* Sweep border glow accent */}
+                    {/* Sweep border glow accent (Thickened for visceral impact) */}
                     <div 
-                        className="absolute inset-x-0 top-0 h-[1px] opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+                        className="absolute inset-x-0 top-0 h-[3px] opacity-0 group-hover:opacity-100 transition-all duration-700 blur-[1px] group-hover:blur-none"
                         style={{
-                            background: `linear-gradient(to right, transparent, ${item.accentColor}, transparent)`
+                            background: `linear-gradient(90deg, transparent, ${item.accentColor}, ${item.accentColor}, transparent)`
                         }}
                     />
 
                     {/* CARD CONTENT HEADER */}
-                    <div className="flex justify-between items-center mb-6" style={{ transform: "translateZ(50px)" }}>
-                        <span 
-                            className={`font-mono text-[9px] uppercase tracking-[0.25em] ${isActive ? '' : 'text-foreground/25'}`}
-                            style={{ color: isActive ? item.accentColor : undefined }}
+                    <div className="flex justify-between items-center mb-8" style={{ transform: "translateZ(80px)" }}>
+                        {/* Editorial Badge */}
+                        <div 
+                            className={`px-3 py-1.5 rounded-full border border-foreground/10 font-mono text-[10px] uppercase tracking-[0.2em] font-bold backdrop-blur-md transition-colors duration-300 ${isActive ? 'bg-background text-foreground' : 'text-foreground/40'}`}
+                            style={{ 
+                                borderColor: isActive ? item.accentColor : undefined,
+                                color: isActive ? item.accentColor : undefined
+                            }}
                         >
                             {item.sysNode}
-                        </span>
-                        <div className="flex items-center gap-1.5">
+                        </div>
+                        <div className="flex items-center gap-2">
                             <div 
-                                className={`w-1.5 h-1.5 rounded-full ${isActive ? '' : 'bg-foreground/15'}`}
-                                style={{ backgroundColor: isActive ? item.accentColor : undefined }}
+                                className={`w-2 h-2 rounded-full ${isActive ? 'animate-pulse shadow-[0_0_8px_currentColor]' : 'bg-foreground/15'}`}
+                                style={{ backgroundColor: isActive ? item.accentColor : undefined, color: item.accentColor }}
                             />
-                            <span className="font-mono text-[8px] text-foreground/20 uppercase tracking-widest">
-                                {isActive ? "LIVE_READOUT" : "LOGGED"}
+                            <span className="font-mono text-[9px] text-foreground/30 uppercase tracking-[0.3em] font-medium">
+                                {isActive ? "ACTIVE_STATE" : "ARCHIVED"}
                             </span>
                         </div>
                     </div>
 
                     {/* YEAR (Mobile HUD Header) */}
                     <span 
-                        className={`font-mono text-xs uppercase tracking-[0.3em] font-medium block mb-2 transition-colors duration-500 ${isActive ? '' : 'text-foreground/30'}`}
-                        style={{ color: isActive ? item.accentColor : undefined, transform: "translateZ(40px)" }}
+                        className={`font-mono text-[11px] uppercase tracking-[0.4em] font-bold block mb-3 transition-colors duration-500 ${isActive ? '' : 'text-foreground/30'}`}
+                        style={{ color: isActive ? item.accentColor : undefined, transform: "translateZ(60px)" }}
                     >
                         {item.year}
                     </span>
 
-                    {/* JOB TITLE */}
-                    <h3 className="text-2xl md:text-3xl font-display font-medium text-foreground mb-1.5 tracking-tight transition-all duration-500 group-hover:translate-x-1" style={{ transform: "translateZ(60px)" }}>
+                    {/* JOB TITLE (Massive Editorial scale) */}
+                    <h3 
+                        className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-foreground mb-3 tracking-tighter leading-[1.1] transition-all duration-500 group-hover:translate-x-2" 
+                        style={{ transform: "translateZ(100px)" }}
+                    >
                         {item.title}
                     </h3>
 
                     {/* ROLE / SUBHEAD */}
                     <div 
-                        className={`text-xs font-mono uppercase tracking-widest mb-6 block transition-colors duration-500 ${isActive ? 'text-foreground/60' : 'text-foreground/40'}`}
-                        style={{ transform: "translateZ(30px)" }}
+                        className={`text-xs md:text-sm font-mono uppercase tracking-[0.2em] mb-8 block transition-colors duration-500 ${isActive ? 'text-foreground/70' : 'text-foreground/40'}`}
+                        style={{ transform: "translateZ(50px)" }}
                     >
                         {item.role}
                     </div>
 
                     {/* DESCRIPTION */}
-                    <p className="text-sm text-foreground/55 group-hover:text-foreground/70 leading-relaxed mb-6 font-light transition-colors duration-300" style={{ transform: "translateZ(25px)" }}>
+                    <p 
+                        className="text-base md:text-lg text-foreground/60 group-hover:text-foreground/80 leading-relaxed mb-8 font-light transition-colors duration-300" 
+                        style={{ transform: "translateZ(40px)" }}
+                    >
                         {item.description}
                     </p>
 
-                    {/* TECH TAGS */}
-                    <div className="flex flex-wrap gap-2.5" style={{ transform: "translateZ(45px)" }}>
+                    {/* TECH TAGS (High Contrast Snap) */}
+                    <div className="flex flex-wrap gap-2.5" style={{ transform: "translateZ(70px)" }}>
                         {item.tags.map((tag: string) => (
                             <span 
                                 key={tag} 
-                                className="px-3 py-1 bg-foreground/[0.03] group-hover:bg-foreground/[0.05] border border-foreground/[0.04] hover:border-foreground/10 rounded-full text-[9px] font-mono tracking-widest text-foreground/40 group-hover:text-foreground/60 uppercase transition-all duration-300 cursor-default"
+                                className="px-3.5 py-1.5 bg-foreground/[0.03] group-hover:bg-foreground group-hover:text-background border border-foreground/[0.08] group-hover:border-transparent rounded-full text-[10px] font-mono tracking-widest text-foreground/50 uppercase transition-all duration-300 cursor-default shadow-sm group-hover:shadow-md"
                             >
                                 {tag}
                             </span>
