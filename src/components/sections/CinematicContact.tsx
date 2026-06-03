@@ -155,12 +155,12 @@ export default function CinematicContact() {
                 >
                     <div ref={finalContentRef} className="w-full max-w-5xl flex flex-col items-center text-center">
                         <div className="final-contact-item opacity-0">
-                            <h2 className="text-sm font-mono uppercase tracking-widest text-foreground/50 mb-4 md:mb-8">What&apos;s Next?</h2>
+                            <h2 className="text-sm font-mono uppercase tracking-widest text-foreground/50 mb-4 md:mb-6">What&apos;s Next?</h2>
                         </div>
                         
                         {/* Optimized Giant Typography with Red Hover */}
                         <div className="final-contact-item opacity-0 group">
-                            <h3 className="text-5xl sm:text-7xl md:text-[6.5rem] lg:text-[7.5rem] font-display font-semibold tracking-tighter text-foreground mb-6 md:mb-8 leading-[0.95] transition-colors duration-500 group-hover:text-red-600 cursor-default">
+                            <h3 className="text-5xl sm:text-6xl md:text-[5.5rem] lg:text-[6rem] font-display font-semibold tracking-tighter text-foreground mb-6 md:mb-8 leading-[0.95] transition-colors duration-500 group-hover:text-red-600 cursor-default">
                                 LET&apos;S BUILD<br />
                                 SOMETHING<br />
                                 <span className="text-accent group-hover:text-red-500 italic font-serif tracking-normal lowercase transition-colors duration-500">impossible</span>.
