@@ -56,6 +56,7 @@ export default function ProjectsRail() {
                     scrub: 1,
                     pin: true,
                     invalidateOnRefresh: true,
+                    refreshPriority: 1, // Ensures this calculates BEFORE downstream components like CinematicContact
                 },
             });
 

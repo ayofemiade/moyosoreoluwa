@@ -35,16 +35,15 @@ export default function CinematicContact() {
                 end: "+=4000",
                 scrub: 1,      
                 pin: stickyRef.current,
-                anticipatePin: 1,
+                refreshPriority: -1, // Ensures this calculates AFTER ProjectsRail adds its 3000px pin spacer
             }
         });
 
-        // Phase 1: Morph the final timeline node (the orb) to full screen
+        // Phase 1: Morph the orb to full screen
         tl.to(orbRef.current, {
             width: "100vw",
             height: "100vh",
             borderRadius: "0px",
-            y: "0vh",
             duration: 1.5,
             ease: "power2.inOut",
         }, 0);
@@ -73,19 +72,21 @@ export default function CinematicContact() {
         }, 2.5);
 
         // Phase 4: Reveal final typography inside the white block
-        tl.fromTo(finalContentRef.current,
+        const finalContactItems = gsap.utils.toArray(".final-contact-item", finalContentRef.current);
+        tl.fromTo(finalContactItems,
             { y: 80, opacity: 0, filter: "blur(15px)" },
-            { y: 0, opacity: 1, filter: "blur(0px)", duration: 1.5, ease: "power3.out" },
+            { y: 0, opacity: 1, filter: "blur(0px)", duration: 1.5, stagger: 0.15, ease: "power3.out" },
             3.2
         );
 
     }, { scope: containerRef });
 
     return (
-        <section ref={containerRef} id="contact" className="relative h-[400vh] bg-background">
-            <div ref={stickyRef} className="h-screen w-full flex items-center justify-center overflow-hidden relative">
+        // z-50 ensures this section strictly overlaps the Timeline (which uses z-20 for its nodes)
+        <section ref={containerRef} id="contact" className="relative h-[400vh] bg-background z-50">
+            <div ref={stickyRef} className="h-screen w-full flex items-center justify-center overflow-hidden relative bg-background">
                 
-                {/* Layer 1: Morphing Dark Orb (The Bridge from Timeline) */}
+                {/* Layer 1: Morphing Dark Orb */}
                 <div 
                     ref={orbRef}
                     className="absolute z-0 flex items-center justify-center overflow-hidden bg-[#080808] will-change-transform shadow-[0_0_100px_rgba(0,0,0,0.3)]"
@@ -93,8 +94,6 @@ export default function CinematicContact() {
                         width: "120px", 
                         height: "120px", 
                         borderRadius: "50%",
-                        // Start slightly higher to visually connect to the bottom of the timeline laser
-                        y: "-30vh"
                     }}
                 >
                     {/* Subtle noise/gradient inside the orb to make it feel premium */}
@@ -151,33 +150,29 @@ export default function CinematicContact() {
                 {/* Layer 3: Solid White Block (Organic clip-path reveal) */}
                 <div 
                     ref={whiteBlockRef}
-                    className="absolute inset-0 z-20 bg-background flex flex-col items-center px-6 will-change-transform"
+                    className="absolute inset-0 z-20 bg-background flex flex-col justify-center items-center px-6 pb-32 md:pb-24 will-change-transform"
                     style={{ clipPath: "circle(0% at 50% 100%)" }}
                 >
-                    <div className="flex-1 w-full flex flex-col justify-center items-center">
-                        <div ref={finalContentRef} className="w-full flex flex-col items-center text-center">
-                            {/* Optimized Giant Typography with Red Hover */}
-                            <div className="group w-full max-w-[100vw] overflow-hidden px-4">
-                                <h3 className="text-[12vw] md:text-[10vw] lg:text-[8vw] font-display font-semibold tracking-tighter text-foreground mb-4 md:mb-8 leading-[0.85] transition-colors duration-500 group-hover:text-red-600 cursor-default">
-                                    LET&apos;S BUILD<br />
-                                    SOMETHING<br />
-                                    <span className="text-accent group-hover:text-red-500 italic font-serif tracking-normal lowercase transition-colors duration-500">impossible</span>.
-                                </h3>
-                            </div>
+                    <div ref={finalContentRef} className="w-full max-w-5xl flex flex-col items-center text-center">
+                        <div className="final-contact-item opacity-0">
+                            <h2 className="text-sm font-mono uppercase tracking-widest text-foreground/50 mb-4 md:mb-8">What&apos;s Next?</h2>
+                        </div>
+                        
+                        {/* Optimized Giant Typography with Red Hover */}
+                        <div className="final-contact-item opacity-0 group">
+                            <h3 className="text-5xl sm:text-7xl md:text-[6.5rem] lg:text-[7.5rem] font-display font-semibold tracking-tighter text-foreground mb-6 md:mb-8 leading-[0.95] transition-colors duration-500 group-hover:text-red-600 cursor-default">
+                                LET&apos;S BUILD<br />
+                                SOMETHING<br />
+                                <span className="text-accent group-hover:text-red-500 italic font-serif tracking-normal lowercase transition-colors duration-500">impossible</span>.
+                            </h3>
+                        </div>
 
-                            <div>
-                                <p className="text-base md:text-xl lg:text-2xl text-foreground/60 max-w-2xl mx-auto leading-relaxed font-light px-6 md:px-0 mt-4 md:mt-8">
-                                    I&apos;m currently open to new opportunities. Whether you have a question or just want to say hi, I&apos;ll try my best to get back to you!
-                                </p>
-                            </div>
+                        <div className="final-contact-item opacity-0">
+                            <p className="text-lg md:text-xl lg:text-2xl text-foreground/60 max-w-2xl mx-auto leading-relaxed font-light px-4 md:px-0">
+                                I&apos;m currently open to new opportunities. Whether you have a question or just want to say hi, I&apos;ll try my best to get back to you!
+                            </p>
                         </div>
                     </div>
-                    
-                    {/* The Absolute Footer - Guarantees this is the end of the site */}
-                    <footer className="w-full py-8 text-center text-xs text-foreground/40 border-t border-foreground/10 shrink-0">
-                        <p>&copy; {new Date().getFullYear()} Moyosore. All rights reserved.</p>
-                        <p className="mt-2 text-foreground/20">Designed & Engineered in 2025.</p>
-                    </footer>
                 </div>
                 
             </div>

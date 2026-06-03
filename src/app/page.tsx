@@ -39,6 +39,8 @@ export default function Home() {
           <ProjectsRail />
           <Timeline />
           <CinematicContact />
+          <Footer />
+          <div className="h-24 md:h-0" /> {/* Mobile dock spacer */}
         </div>
       )}
 
