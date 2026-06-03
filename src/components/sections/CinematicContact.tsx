@@ -15,6 +15,7 @@ export default function CinematicContact() {
     const textOverOrbRef = useRef<HTMLDivElement>(null);
     const whiteBlockRef = useRef<HTMLDivElement>(null);
     const finalContentRef = useRef<HTMLDivElement>(null);
+    const scrollIndicatorRef = useRef<HTMLDivElement>(null);
 
     const [copied, setCopied] = useState(false);
     const email = "oreayofemi@gmail.com";
@@ -32,10 +33,11 @@ export default function CinematicContact() {
             scrollTrigger: {
                 trigger: containerRef.current,
                 start: "top top", 
-                end: "+=4000",
+                // Reduced from 4000px to 2500px to require less scrolling
+                end: "+=2500",
                 scrub: 1,      
                 pin: stickyRef.current,
-                refreshPriority: -1, // Ensures this calculates AFTER ProjectsRail adds its 3000px pin spacer
+                refreshPriority: -1, 
             }
         });
 
@@ -44,46 +46,61 @@ export default function CinematicContact() {
             width: "100vw",
             height: "100vh",
             borderRadius: "0px",
-            duration: 1.5,
+            duration: 1.0,
             ease: "power2.inOut",
         }, 0);
+
+        // Phase 1.5: The Teaser Dome (Rising Sun)
+        // Starts at t=0 so it rises as the dark orb expands
+        tl.fromTo(whiteBlockRef.current,
+            { clipPath: "circle(0% at 50% 100%)" },
+            { clipPath: "circle(15% at 50% 100%)", duration: 1.0, ease: "power2.out" },
+            0
+        );
 
         // Phase 2: Reveal Contact info over the expanded dark orb
         const orbTextItems = gsap.utils.toArray(".orb-text-item", textOverOrbRef.current);
         tl.fromTo(orbTextItems, 
             { y: 60, opacity: 0, filter: "blur(10px)" },
-            { y: 0, opacity: 1, filter: "blur(0px)", duration: 1.5, stagger: 0.15, ease: "power3.out" },
-            1.0
+            { y: 0, opacity: 1, filter: "blur(0px)", duration: 1.0, stagger: 0.1, ease: "power3.out" },
+            0.6 // Starts revealing while the orb is still finishing its expansion
         );
 
-        // Phase 3: Organic White Background Emergence using clip-path
-        tl.fromTo(whiteBlockRef.current,
-            { clipPath: "circle(0% at 50% 100%)" },
-            { clipPath: "circle(150% at 50% 100%)", duration: 2.5, ease: "power2.inOut" },
-            2.5
+        // Phase 3: Organic White Background Full Emergence
+        tl.to(whiteBlockRef.current,
+            { clipPath: "circle(150% at 50% 100%)", duration: 1.5, ease: "power2.inOut" },
+            1.6 // Starts immediately as Phase 2 finishes settling
         );
+
+        // Fade out the scroll indicator as the white background emerges
+        tl.to(scrollIndicatorRef.current, {
+            opacity: 0,
+            duration: 0.5,
+            ease: "power2.out"
+        }, 1.6);
 
         // Subtly parallax the text over the orb away as the white mask overtakes it
         tl.to(textOverOrbRef.current, {
             y: "-30%",
             opacity: 0,
-            duration: 1.5,
+            duration: 1.0,
             ease: "power3.inOut"
-        }, 2.5);
+        }, 1.6);
 
         // Phase 4: Reveal final typography inside the white block
         const finalContactItems = gsap.utils.toArray(".final-contact-item", finalContentRef.current);
         tl.fromTo(finalContactItems,
             { y: 80, opacity: 0, filter: "blur(15px)" },
-            { y: 0, opacity: 1, filter: "blur(0px)", duration: 1.5, stagger: 0.15, ease: "power3.out" },
-            3.2
+            { y: 0, opacity: 1, filter: "blur(0px)", duration: 1.2, stagger: 0.1, ease: "power3.out" },
+            2.0 // Starts while the white background is still expanding outward
         );
 
     }, { scope: containerRef });
 
     return (
-        // z-50 ensures this section strictly overlaps the Timeline (which uses z-20 for its nodes)
-        <section ref={containerRef} id="contact" className="relative h-[400vh] bg-background z-50">
+        // z-50 ensures this section strictly overlaps the Timeline
+        // Reduced container height to 250vh to match the tighter 2500px scroll duration
+        <section ref={containerRef} id="contact" className="relative h-[250vh] bg-background z-50">
             <div ref={stickyRef} className="h-screen w-full flex items-center justify-center overflow-hidden relative bg-background">
                 
                 {/* Layer 1: Morphing Dark Orb */}
@@ -153,7 +170,7 @@ export default function CinematicContact() {
                     className="absolute inset-0 z-20 bg-background flex flex-col justify-center items-center px-6 pb-32 md:pb-24 will-change-transform"
                     style={{ clipPath: "circle(0% at 50% 100%)" }}
                 >
-                    <div ref={finalContentRef} className="w-full max-w-5xl flex flex-col items-center text-center">
+                    <div ref={finalContentRef} className="w-full max-w-5xl flex flex-col items-center text-center relative z-10">
                         <div className="final-contact-item opacity-0">
                             <h2 className="text-sm font-mono uppercase tracking-widest text-foreground/50 mb-4 md:mb-6">What&apos;s Next?</h2>
                         </div>
@@ -171,6 +188,27 @@ export default function CinematicContact() {
                             <p className="text-lg md:text-xl lg:text-2xl text-foreground/60 max-w-2xl mx-auto leading-relaxed font-light px-4 md:px-0">
                                 I&apos;m currently open to new opportunities. Whether you have a question or just want to say hi, I&apos;ll try my best to get back to you!
                             </p>
+                        </div>
+                    </div>
+
+                    {/* ── THE RISING SUN UX: SCROLL INDICATOR ── */}
+                    {/* Positioned higher (bottom-28 to bottom-32) so it clears the global navigation dock, but still fits inside the initial 15% dome */}
+                    <div ref={scrollIndicatorRef} className="absolute bottom-32 md:bottom-28 left-1/2 -translate-x-1/2 flex flex-col items-center opacity-70 z-0 cursor-default pointer-events-none">
+                        <div className="w-16 h-16 relative flex items-center justify-center">
+                            {/* Rotating text */}
+                            <svg viewBox="0 0 100 100" className="w-full h-full absolute inset-0 animate-[spin_8s_linear_infinite]">
+                                <path id="textPath" d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0" fill="transparent" />
+                                <text className="text-[11.5px] font-mono tracking-[0.25em] uppercase fill-foreground font-bold">
+                                    <textPath href="#textPath" startOffset="0">Keep Scrolling • Keep Scrolling • </textPath>
+                                </text>
+                            </svg>
+                            {/* Bouncing Arrow */}
+                            <svg 
+                                className="w-5 h-5 text-foreground absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-bounce" 
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                            </svg>
                         </div>
                     </div>
                 </div>
