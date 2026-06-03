@@ -5,7 +5,7 @@ import CinematicIntro from "@/components/motion/CinematicIntro";
 import CinematicJourney from "@/components/sequence/CinematicJourney";
 import ProjectsRail from "@/components/sections/ProjectsRail";
 import Timeline from "@/components/sections/Timeline";
-import Contact from "@/components/sections/Contact";
+import CinematicContact from "@/components/sections/CinematicContact";
 import Footer from "@/components/layout/Footer";
 import { useAmbientSound } from "@/components/hero/useAmbientSound";
 import SoundToggle from "@/components/hero/SoundToggle";
@@ -38,9 +38,7 @@ export default function Home() {
           <CinematicJourney />
           <ProjectsRail />
           <Timeline />
-          <Contact />
-          <Footer />
-          <div className="h-24 md:h-0" /> {/* Mobile dock spacer */}
+          <CinematicContact />
         </div>
       )}
 

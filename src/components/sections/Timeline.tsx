@@ -27,13 +27,13 @@ export default function Timeline() {
         <section
             id="timeline"
             ref={containerRef}
-            className="py-32 md:py-48 px-6 bg-[#080808] relative overflow-hidden transition-colors duration-1000"
+            className="py-32 md:py-48 px-6 bg-background relative overflow-hidden transition-colors duration-1000"
         >
             {/* Ambient Background Grid lines */}
             <div 
-                className="absolute inset-0 opacity-[0.015] pointer-events-none"
+                className="absolute inset-0 opacity-[0.03] dark:opacity-[0.015] pointer-events-none"
                 style={{
-                    backgroundImage: "linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px)",
+                    backgroundImage: "linear-gradient(to right, var(--foreground) 1px, transparent 1px), linear-gradient(to bottom, var(--foreground) 1px, transparent 1px)",
                     backgroundSize: "60px 60px"
                 }}
             />
@@ -66,7 +66,7 @@ export default function Timeline() {
                 {/* Header */}
                 <div className="flex flex-col items-center justify-center mb-24 md:mb-36 text-center">
                     <motion.span
-                        className="font-mono text-[10px] md:text-xs uppercase tracking-[0.4em] text-white/30 mb-4 block"
+                        className="font-mono text-[10px] md:text-xs uppercase tracking-[0.4em] text-foreground/30 mb-4 block"
                         initial={{ opacity: 0, y: 15 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
@@ -75,31 +75,31 @@ export default function Timeline() {
                         Engineering Log
                     </motion.span>
                     <motion.h2
-                        className="text-4xl md:text-6xl font-display font-medium tracking-tight text-white leading-none"
+                        className="text-4xl md:text-6xl font-display font-medium tracking-tight text-foreground leading-none"
                         initial={{ opacity: 0, y: 25 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                     >
-                        Professional <span className="font-serif italic font-light text-white/50">Journey</span>
+                        Professional <span className="font-serif italic font-light text-foreground/50">Journey</span>
                     </motion.h2>
                 </div>
 
                 {/* Timeline Grid */}
-                <div className="relative border-l border-white/[0.05] md:border-none pl-8 md:pl-0">
+                <div className="relative border-l border-foreground/10 md:border-none pl-8 md:pl-0">
                     
                     {/* Cybernetic Spine Connector */}
                     <div className="hidden md:flex absolute left-1/2 top-4 bottom-4 w-10 -translate-x-1/2 overflow-hidden justify-center z-0">
                         {/* Background track */}
-                        <div className="absolute inset-y-0 w-[1px] bg-white/[0.05]" />
+                        <div className="absolute inset-y-0 w-[1px] bg-foreground/10" />
                         
                         {/* High-energy Laser Laser Core */}
                         <motion.div 
                             style={{ y: useTransform(laserScaleY, s => `${(s - 1) * 100}%`) }} 
-                            className="w-[2px] h-full bg-gradient-to-b from-transparent via-white to-transparent shadow-[0_0_15px_rgba(255,255,255,1)] relative will-change-transform"
+                            className="w-[2px] h-full bg-gradient-to-b from-transparent via-foreground to-transparent shadow-md dark:shadow-[0_0_15px_rgba(255,255,255,1)] relative will-change-transform"
                         >
                             {/* Moving spark node */}
-                            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-white shadow-[0_0_20px_#fff]" />
+                            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-foreground shadow-sm dark:shadow-[0_0_20px_#fff]" />
                         </motion.div>
                     </div>
 
@@ -205,21 +205,21 @@ function TimelineRow({ item, index, activeIndex, onFocus }: TimelineRowProps) {
         >
             {/* Cybernetic Spine Dot Node */}
             <div 
-                className={`absolute left-[-42px] md:left-1/2 md:-translate-x-1/2 top-4 w-5 h-5 rounded-full border bg-[#080808] z-20 flex items-center justify-center transition-all duration-700 ${
+                className={`absolute left-[-42px] md:left-1/2 md:-translate-x-1/2 top-4 w-5 h-5 rounded-full border bg-background z-20 flex items-center justify-center transition-all duration-700 ${
                     isActive 
-                    ? "scale-125 border-white shadow-[0_0_15px_#fff]" 
-                    : "border-white/10"
+                    ? "scale-125 border-foreground shadow-sm dark:shadow-[0_0_15px_#fff]" 
+                    : "border-foreground/10"
                 }`}
                 style={{
-                    borderColor: isActive ? item.accentColor : "rgba(255,255,255,0.1)"
+                    borderColor: isActive ? item.accentColor : undefined
                 }}
             >
                 {/* Node center pulsing grid */}
                 <motion.div 
-                    className="w-2.5 h-2.5 rounded-full bg-white"
+                    className={`w-2.5 h-2.5 rounded-full ${isActive ? '' : 'bg-foreground/15'}`}
                     animate={isActive ? { scale: [1, 1.4, 1] } : { scale: 1 }}
                     transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-                    style={{ backgroundColor: isActive ? item.accentColor : "rgba(255,255,255,0.15)" }}
+                    style={{ backgroundColor: isActive ? item.accentColor : undefined }}
                 />
 
                 {/* Node atmospheric expansion rings */}
@@ -260,13 +260,13 @@ function TimelineRow({ item, index, activeIndex, onFocus }: TimelineRowProps) {
                         y: combinedCardY,
                         transformStyle: "preserve-3d" 
                     }}
-                    className="group cursor-pointer relative bg-neutral-900/[0.15] border border-white/[0.04] hover:border-white/[0.09] backdrop-blur-md rounded-2xl p-8 md:p-10 shadow-2xl overflow-hidden transition-colors duration-500 will-change-transform"
+                    className="group cursor-pointer relative bg-foreground/[0.03] border border-foreground/[0.04] hover:border-foreground/[0.09] backdrop-blur-md rounded-2xl p-8 md:p-10 shadow-2xl overflow-hidden transition-colors duration-500 will-change-transform"
                 >
                     {/* Glowing card base background grid effect */}
                     <div 
-                        className="absolute inset-0 opacity-[0.015] group-hover:opacity-[0.035] transition-opacity pointer-events-none"
+                        className="absolute inset-0 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity pointer-events-none"
                         style={{
-                            backgroundImage: "radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px)",
+                            backgroundImage: "radial-gradient(var(--foreground) 1px, transparent 1px)",
                             backgroundSize: "20px 20px"
                         }}
                     />
@@ -282,17 +282,17 @@ function TimelineRow({ item, index, activeIndex, onFocus }: TimelineRowProps) {
                     {/* CARD CONTENT HEADER */}
                     <div className="flex justify-between items-center mb-6" style={{ transform: "translateZ(50px)" }}>
                         <span 
-                            className="font-mono text-[9px] uppercase tracking-[0.25em]"
-                            style={{ color: isActive ? item.accentColor : "rgba(255,255,255,0.25)" }}
+                            className={`font-mono text-[9px] uppercase tracking-[0.25em] ${isActive ? '' : 'text-foreground/25'}`}
+                            style={{ color: isActive ? item.accentColor : undefined }}
                         >
                             {item.sysNode}
                         </span>
                         <div className="flex items-center gap-1.5">
                             <div 
-                                className="w-1.5 h-1.5 rounded-full"
-                                style={{ backgroundColor: isActive ? item.accentColor : "rgba(255,255,255,0.15)" }}
+                                className={`w-1.5 h-1.5 rounded-full ${isActive ? '' : 'bg-foreground/15'}`}
+                                style={{ backgroundColor: isActive ? item.accentColor : undefined }}
                             />
-                            <span className="font-mono text-[8px] text-white/20 uppercase tracking-widest">
+                            <span className="font-mono text-[8px] text-foreground/20 uppercase tracking-widest">
                                 {isActive ? "LIVE_READOUT" : "LOGGED"}
                             </span>
                         </div>
@@ -300,27 +300,27 @@ function TimelineRow({ item, index, activeIndex, onFocus }: TimelineRowProps) {
 
                     {/* YEAR (Mobile HUD Header) */}
                     <span 
-                        className="font-mono text-xs uppercase tracking-[0.3em] font-medium block mb-2 transition-colors duration-500"
-                        style={{ color: isActive ? item.accentColor : "rgba(255,255,255,0.3)", transform: "translateZ(40px)" }}
+                        className={`font-mono text-xs uppercase tracking-[0.3em] font-medium block mb-2 transition-colors duration-500 ${isActive ? '' : 'text-foreground/30'}`}
+                        style={{ color: isActive ? item.accentColor : undefined, transform: "translateZ(40px)" }}
                     >
                         {item.year}
                     </span>
 
                     {/* JOB TITLE */}
-                    <h3 className="text-2xl md:text-3xl font-display font-medium text-white mb-1.5 tracking-tight transition-all duration-500 group-hover:translate-x-1" style={{ transform: "translateZ(60px)" }}>
+                    <h3 className="text-2xl md:text-3xl font-display font-medium text-foreground mb-1.5 tracking-tight transition-all duration-500 group-hover:translate-x-1" style={{ transform: "translateZ(60px)" }}>
                         {item.title}
                     </h3>
 
                     {/* ROLE / SUBHEAD */}
                     <div 
-                        className="text-xs font-mono uppercase tracking-widest mb-6 block transition-colors duration-500"
-                        style={{ color: isActive ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.35)", transform: "translateZ(30px)" }}
+                        className={`text-xs font-mono uppercase tracking-widest mb-6 block transition-colors duration-500 ${isActive ? 'text-foreground/60' : 'text-foreground/40'}`}
+                        style={{ transform: "translateZ(30px)" }}
                     >
                         {item.role}
                     </div>
 
                     {/* DESCRIPTION */}
-                    <p className="text-sm text-white/55 group-hover:text-white/70 leading-relaxed mb-6 font-light transition-colors duration-300" style={{ transform: "translateZ(25px)" }}>
+                    <p className="text-sm text-foreground/55 group-hover:text-foreground/70 leading-relaxed mb-6 font-light transition-colors duration-300" style={{ transform: "translateZ(25px)" }}>
                         {item.description}
                     </p>
 
@@ -329,7 +329,7 @@ function TimelineRow({ item, index, activeIndex, onFocus }: TimelineRowProps) {
                         {item.tags.map((tag: string) => (
                             <span 
                                 key={tag} 
-                                className="px-3 py-1 bg-white/[0.03] group-hover:bg-white/[0.05] border border-white/[0.04] hover:border-white/10 rounded-full text-[9px] font-mono tracking-widest text-white/40 group-hover:text-white/60 uppercase transition-all duration-300 cursor-default"
+                                className="px-3 py-1 bg-foreground/[0.03] group-hover:bg-foreground/[0.05] border border-foreground/[0.04] hover:border-foreground/10 rounded-full text-[9px] font-mono tracking-widest text-foreground/40 group-hover:text-foreground/60 uppercase transition-all duration-300 cursor-default"
                             >
                                 {tag}
                             </span>
@@ -344,13 +344,13 @@ function TimelineRow({ item, index, activeIndex, onFocus }: TimelineRowProps) {
                         y: yearY,
                         z: -100,
                         transformStyle: "preserve-3d",
-                        color: isActive ? `${item.accentColor}0e` : "rgba(255,255,255,0.015)",
+                        color: isActive ? `${item.accentColor}1a` : undefined,
                         fontSize: "clamp(6rem, 15vw, 11rem)",
                         left: isEven ? "auto" : "-10%",
                         right: isEven ? "-10%" : "auto",
                         zIndex: -1,
                     }}
-                    className="absolute -top-12 md:-top-20 pointer-events-none select-none font-display font-bold leading-none tracking-tighter transition-colors duration-1000 hidden md:block"
+                    className={`absolute -top-12 md:-top-20 pointer-events-none select-none font-display font-bold leading-none tracking-tighter transition-colors duration-1000 hidden md:block ${isActive ? '' : 'text-foreground/[0.02]'}`}
                 >
                     {item.year === "Now" ? "NOW" : item.year}
                 </motion.div>

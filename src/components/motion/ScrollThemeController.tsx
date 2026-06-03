@@ -10,13 +10,13 @@ export default function ScrollThemeController() {
     useMotionValueEvent(scrollY, "change", (latest) => {
         // We will use precise element tracking later, for now we use rough estimates or getElementById
         const projectsSection = document.getElementById("projects");
-        const contactSection = document.getElementById("contact");
+        const timelineSection = document.getElementById("timeline");
 
-        if (projectsSection && contactSection) {
+        if (projectsSection && timelineSection) {
             const projectsTop = projectsSection.offsetTop - 300; // Trigger before reaching
-            const contactTop = contactSection.offsetTop - 300;
+            const timelineTop = timelineSection.offsetTop - 300;
 
-            if (latest >= projectsTop && latest < contactTop) {
+            if (latest >= projectsTop && latest < timelineTop) {
                 if (theme !== "dark") setTheme("dark");
             } else {
                 if (theme !== "light") setTheme("light");
