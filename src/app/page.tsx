@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react";
 import CinematicIntro from "@/components/motion/CinematicIntro";
 import CinematicJourney from "@/components/sequence/CinematicJourney";
-import ProjectsRail from "@/components/sections/ProjectsRail";
+import DigitalUniverse from "@/components/sequence/DigitalUniverse";
 import Timeline from "@/components/sections/Timeline";
 import CinematicContact from "@/components/sections/CinematicContact";
 import Footer from "@/components/layout/Footer";
@@ -36,7 +36,7 @@ export default function Home() {
       {showContent && (
         <div className="animate-fade-in">
           <CinematicJourney />
-          <ProjectsRail />
+          <DigitalUniverse />
           <Timeline />
           <CinematicContact />
           <Footer />
